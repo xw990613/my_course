@@ -28,6 +28,7 @@ import homeRight from './header/homeRight.vue'
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 0 64px;
 
   .left {
     flex: 1;
