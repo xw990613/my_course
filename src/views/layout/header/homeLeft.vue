@@ -16,10 +16,13 @@
       <el-menu-item index="/layout/home">
         {{ $t('homePage.homePage') }}
       </el-menu-item>
+      <el-menu-item index="/layout/allCourse">
+        {{ $t('homePage.Courses') }}
+      </el-menu-item>
+      <el-menu-item index="/layout/questionnaire"> 调查问卷 </el-menu-item>
       <el-menu-item index="/layout/school">
         {{ $t('homePage.PartnerSchool') }}
       </el-menu-item>
-      <el-menu-item index="3">雨课堂</el-menu-item>
     </el-menu>
   </div>
 </template>
@@ -31,9 +34,18 @@
 </script>
 
 <script lang="ts" setup>
-  import { ref } from 'vue';
-
-  const activeIndex = ref('/layout/home');
+  import { ref, watch } from 'vue';
+  import { useRoute } from 'vue-router';
+  const route = useRoute();
+  const activeIndex = ref(route.path);
+  // 监听路由变化，更新activeIndex
+  watch(
+    () => route.path,
+    newPath => {
+      activeIndex.value = newPath;
+      console.log('路由变化更新activeIndex:', newPath);
+    },
+  );
   const handleSelect = (key: string, keyPath: string[]) => {
     console.log(key, keyPath);
   };
@@ -55,5 +67,16 @@
     fill: currentColor;
     overflow: hidden;
     margin-right: 8px; // 图标和文字间距
+  }
+  ::v-deep(.el-menu-item:hover) {
+    background-color: transparent !important;
+  }
+  ::v-deep(.el-menu--horizontal > .el-menu-item.is-active) {
+    border-bottom: none !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+  }
+  ::v-deep(.el-menu--horizontal > .el-menu-item) {
+    border-bottom: none !important;
   }
 </style>

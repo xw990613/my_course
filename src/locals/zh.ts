@@ -8,5 +8,6 @@ export default {
   homePage: {
     homePage: '主页',
     PartnerSchool: '合作院校',
+    Courses: '课程',
   },
 };

@@ -29,9 +29,33 @@ const router = createRouter({
           component: () => import('@/views/home/index.vue'),
         },
         {
+          name: 'questionnaire',
+          path: 'questionnaire',
+          component: () => import('@/views/questionnaire/index.vue'),
+        },
+        {
+          name: 'allCourse',
+          path: 'allCourse',
+          component: () => import('@/views/allCourse/index.vue'),
+        },
+        {
           name: 'school',
           path: 'school',
           component: () => import('@/views/school/index.vue'),
+        },
+        {
+          name: 'personalCenter',
+          path: 'personalcenter',
+          component: () => import('@/views/personalcenter/index.vue'),
+          redirect: '/layout/personalCenter/personalInformation',
+          children: [
+            {
+              name: 'personalInformation',
+              path: 'personalInformation',
+              component: () =>
+                import('@/views/personalcenter/personalInformation/index.vue'),
+            },
+          ],
         },
       ],
     },

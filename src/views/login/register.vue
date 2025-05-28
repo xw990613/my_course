@@ -14,22 +14,22 @@
         label-width="auto"
         class="demo-ruleForm"
       >
-        <el-form-item label="" prop="phone" class="form-item-fixed">
+        <el-form-item label="" prop="phone_number" class="form-item-fixed">
           <el-input
-            v-model="ruleForm.phone"
+            v-model="ruleForm.phone_number"
             type="text"
             autocomplete="off"
             placeholder="请输入手机号"
           />
         </el-form-item>
-        <el-form-item label="" prop="email" class="form-item-fixed">
+        <!-- <el-form-item label="" prop="email" class="form-item-fixed">
           <el-input
             v-model="ruleForm.email"
             type="text"
             autocomplete="off"
             placeholder="请输入邮箱号"
           />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="" prop="password" class="form-item-fixed">
           <el-input
             v-model="ruleForm.password"
@@ -66,14 +66,14 @@
   import { reactive, ref } from 'vue';
   import type { FormInstance, FormRules } from 'element-plus';
   import { useRouter } from 'vue-router';
-
+  import { useAuthStore } from '@/stores/auth';
   const ruleFormRef = ref<FormInstance>();
-
+  const auth = useAuthStore();
   // 自定义校验器：手机号
   const validatePhone = (rule: any, value: string, callback: any) => {
     const phoneReg = /^1[3-9]\d{9}$/;
     if (!value) {
-      callback(new Error('请输入手机号'));
+      callback(new Error('手机号不能为空'));
     } else if (!phoneReg.test(value)) {
       callback(new Error('请输入正确的手机号'));
     } else {
@@ -81,45 +81,48 @@
     }
   };
   // 自定义校验器：邮箱
-  const validateEmail = (rule: any, value: string, callback: any) => {
-    const emailReg = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
-    if (!value) {
-      callback(new Error('请输入邮箱'));
-    } else if (!emailReg.test(value)) {
-      callback(new Error('邮箱格式不正确'));
-    } else {
-      callback();
-    }
-  };
+  // const validateEmail = (rule: any, value: string, callback: any) => {
+  //   const emailReg = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+  //   if (!value) {
+  //     callback(new Error('请输入邮箱'));
+  //   } else if (!emailReg.test(value)) {
+  //     callback(new Error('邮箱格式不正确'));
+  //   } else {
+  //     callback();
+  //   }
+  // };
 
   // 自定义校验器：密码
   const validatePassword = (rule: any, value: string, callback: any) => {
     if (!value) {
-      callback(new Error('请输入密码'));
+      callback(new Error('密码不能为空'));
     } else if (value.length < 6) {
-      callback(new Error('密码不能少于6位'));
+      callback(new Error('密码长度不能少于6位'));
+    } else if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(value)) {
+      callback(new Error('密码必须包含字母和数字'));
     } else {
       callback();
     }
   };
 
   const ruleForm = reactive({
-    phone: '',
-    email: '',
+    phone_number: '',
+    // email: '',
     password: '',
   });
 
   const rules = reactive<FormRules<typeof ruleForm>>({
-    phone: [{ validator: validatePhone, trigger: 'blur' }],
+    phone_number: [{ validator: validatePhone, trigger: 'blur' }],
     password: [{ validator: validatePassword, trigger: 'blur' }],
-    email: [{ validator: validateEmail, trigger: 'blur' }],
+    // email: [{ validator: validateEmail, trigger: 'blur' }],
   });
 
   const submitForm = (formEl: FormInstance | undefined) => {
     if (!formEl) return;
-    formEl.validate(valid => {
+    formEl.validate(async valid => {
       if (valid) {
-        console.log('submit!');
+        // // 发送注册请求
+        auth.register(ruleForm);
       } else {
         console.log('error submit!');
       }
@@ -133,11 +136,14 @@
 
 <style scoped>
   .login-wrapper {
-    min-height: 93.5vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 0 20px;
+    height: 100vh;
+    background-image: url('../../assets/img/background.png');
+    background-repeat: no-repeat;
+    background-size: cover;
   }
 
   .login-container {

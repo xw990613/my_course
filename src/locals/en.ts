@@ -3,10 +3,11 @@ export default {
   login: {
     login: 'login',
     userName: 'userName',
-    password: 'password'
+    password: 'password',
   },
   homePage: {
     homePage: 'Home',
-    PartnerSchool: 'PartnerSchool'
-  }
-}
+    PartnerSchool: 'PartnerSchool',
+    Courses: 'Courses',
+  },
+};

@@ -13,33 +13,33 @@
 </template>
 
 <script lang="ts">
-export default {
-  name: 'my-home',
-}
+  export default {
+    name: 'my-home',
+  };
 </script>
 
 <script setup lang="ts">
-import HomeLeft from './header/homeLeft.vue'
-import homeRight from './header/homeRight.vue'
+  import HomeLeft from './header/homeLeft.vue';
+  import homeRight from './header/homeRight.vue';
 </script>
 
 <style scoped lang="scss">
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 64px;
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 64px;
 
-  .left {
-    flex: 1;
-    min-width: 0; // 防止超出
-  }
+    .left {
+      flex: 1;
+      min-width: 0; // 防止超出
+    }
 
-  .right {
-    flex-shrink: 0;
+    .right {
+      flex-shrink: 0;
+    }
+    ::v-deep(.el-menu--horizontal.el-menu) {
+      border-bottom: none !important;
+    }
   }
-  ::v-deep(.el-menu--horizontal.el-menu) {
-    border-bottom: none !important;
-  }
-}
 </style>

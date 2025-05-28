@@ -5,6 +5,7 @@
       style="width: 240px; margin-right: 20px"
       placeholder="请输入"
       :suffix-icon="Search"
+      @change="handelChange"
     />
     <el-dropdown @command="changeType" trigger="click">
       <div class="lang-selector">
@@ -21,8 +22,8 @@
       <template #dropdown>
         <el-dropdown-menu>
           <el-dropdown-item command="zh">中文</el-dropdown-item>
-          <el-dropdown-item command="en">英文</el-dropdown-item>
-          <el-dropdown-item command="my">马来语</el-dropdown-item>
+          <el-dropdown-item command="en">English</el-dropdown-item>
+          <el-dropdown-item command="my">Melayu</el-dropdown-item>
         </el-dropdown-menu>
       </template>
     </el-dropdown>
@@ -37,8 +38,14 @@
       <template #dropdown>
         <el-dropdown-menu>
           <el-dropdown-item command="my_Course">我的课程</el-dropdown-item>
-          <el-dropdown-item command="person_info">个人资料</el-dropdown-item>
-          <el-dropdown-item command="exit">安全退出</el-dropdown-item>
+          <el-dropdown-item
+            command="person_info"
+            @click="router.push('/layout/personalCenter')"
+            >个人资料</el-dropdown-item
+          >
+          <el-dropdown-item command="exit" @click="userLogout"
+            >安全退出</el-dropdown-item
+          >
         </el-dropdown-menu>
       </template>
     </el-dropdown>
@@ -50,28 +57,41 @@
   import { Search } from '@element-plus/icons-vue';
   import { ArrowDown } from '@element-plus/icons-vue';
   import { useI18n } from 'vue-i18n';
+  import { useAuthStore } from '@/stores/auth';
+  import emitter from '@/utils/emitter';
+  import { useRouter } from 'vue-router';
   const { locale } = useI18n();
+  const auth = useAuthStore();
   const input = ref('');
-
+  const router = useRouter();
   const languageMap = {
     zh: '中文',
-    en: '英文',
-    my: '马来语',
+    en: 'English',
+    my: 'Melayu',
   } as const;
   type LangKey = keyof typeof languageMap;
-  const currentLanguage = ref<LangKey>('zh'); // 默认选中中文
+  let currentLanguage = (localStorage.getItem('lang') as LangKey) || 'zh';
 
   // 计算显示的文字
-  const currentLanguageText = computed(
-    () => languageMap[currentLanguage.value],
-  );
+  const currentLanguageText = computed(() => languageMap[currentLanguage]);
+
   function changeType(value: string) {
-    currentLanguage.value = value as LangKey;
+    currentLanguage = value as LangKey;
     locale.value = value;
+    auth.lang = value;
     localStorage.setItem('lang', value);
+    // 刷新页面，重新加载所有内容
+    window.location.reload();
   }
   function jumpPage(value: string) {
     console.log(value);
+  }
+  // 退出登录
+  function userLogout() {
+    auth.userLogout();
+  }
+  function handelChange() {
+    emitter.emit('sendInput', { query: input.value });
   }
 </script>
 <style scoped lang="scss">
