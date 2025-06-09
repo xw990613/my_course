@@ -3,7 +3,8 @@
   "include": [
     "env.d.ts",
     "src/**/*",
-    "src/**/*.vue"
+    "src/**/*.vue",
+    "src/global.d.ts",
   ],
   "exclude": [
     "src/**/__tests__/*"
@@ -18,6 +19,10 @@
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Node",
+    "types": [
+      "vue",
+      "vite/client"
+    ],
     "lib": [
       "DOM",
       "ESNext"

@@ -12,7 +12,7 @@
           :class="{ active: i.selected }"
           :key="i.id"
           @click="selectItem(i, item)"
-          >{{ i.name_zh }}</span
+          >{{ language === 'zh' ? i.name_zh : i.name_en }}</span
         >
       </div>
     </el-card>
@@ -27,7 +27,7 @@
 
 <script setup lang="ts">
   import { getProjectList } from '@/api/projectList';
-  import { reactive, onMounted, ref } from 'vue';
+  import { reactive, onMounted, ref, computed } from 'vue';
   import emitter from '@/utils/emitter';
   // eslint-disable-next-line prefer-const
   let classify_id = ref(0);
@@ -52,24 +52,29 @@
     label: string;
     list: Item[]; // 确保 list 是 Item 数组
   }
+
+  const language = computed(() => {
+    return localStorage.getItem('lang');
+  });
+
   const classify_list: Category = {
     id: 1,
-    label: '学科分类',
+    label: language.value === 'zh' ? '学科分类' : 'Subjects',
     list: [{ id: 0, name_zh: '全部', name_en: 'all', selected: true }],
   };
   const status: Category = {
     id: 2,
-    label: '上课状态',
+    label: language.value === 'zh' ? '上课状态' : 'Availability',
     list: [{ id: 0, name_zh: '全部', name_en: 'all', selected: true }],
   };
   const org: Category = {
     id: 3,
-    label: '学校',
+    label: language.value === 'zh' ? '学校' : 'Schools & Partners',
     list: [{ id: 0, name_zh: '全部', name_en: 'all', selected: true }],
   };
   const selling_type: Category = {
     id: 4,
-    label: '课程类型',
+    label: language.value === 'zh' ? '课程类型' : 'Products',
     list: [{ id: 0, name_zh: '全部', name_en: 'all', selected: true }],
   };
   // 使用 reactive 使 allData 成为响应式数据
@@ -129,6 +134,10 @@
       display: flex;
       gap: 10px; /* 为标签项之间增加间距 */
       flex-wrap: wrap; /* 允许标签项换行 */
+      cursor: pointer;
+    }
+    .item span:hover {
+      color: #1769fe;
     }
     .t1 {
       background: #f6f6f6;

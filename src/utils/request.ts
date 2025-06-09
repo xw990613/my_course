@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
+import router from '@/router';
 // 创建实例
 const service = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL, // 环境变量配置
@@ -58,8 +59,25 @@ service.interceptors.response.use(
     if (axios.isCancel(error)) {
       console.warn('请求被取消：', error.message);
       ElMessage.error('请求被取消:' + error.message);
+    } else if (error.response) {
+      const status = error.response.status;
+
+      if (status === 401) {
+        ElMessage.error('登录已过期，请重新登录');
+        localStorage.removeItem('token');
+        router.push({
+          path: '/login',
+          query: { redirect: router.currentRoute.value.fullPath },
+        });
+      } else if (status === 403) {
+        ElMessage.error('没有权限访问该资源');
+      } else if (status >= 500) {
+        ElMessage.error('服务器异常，请稍后再试');
+      } else {
+        ElMessage.error('请求失败');
+      }
     } else {
-      ElMessage.error('网络异常，请稍后再试');
+      ElMessage.error('网络异常，请检查连接');
     }
     return new Promise(() => {}); // 返回一个空的 Promise，避免未处理的 Promise 拦截器错误
   },

@@ -57,7 +57,7 @@
 <script lang="ts" setup>
   import { reactive, ref } from 'vue';
   import type { FormInstance, FormRules } from 'element-plus';
-  import { useRouter } from 'vue-router';
+  import { useRouter, useRoute } from 'vue-router';
   import { useAuthStore } from '@/stores/auth';
   const ruleFormRef = ref<FormInstance>();
   const auth = useAuthStore();
@@ -95,12 +95,13 @@
     phone_number: [{ validator: validatePhone, trigger: 'blur' }],
     password: [{ validator: validatePassword, trigger: 'blur' }],
   });
-
+  const route = useRoute();
   const submitForm = (formEl: FormInstance | undefined) => {
     if (!formEl) return;
     formEl.validate(async valid => {
       if (valid) {
-        auth.login(ruleForm);
+        const redirect = route.query.redirect as string;
+        auth.login(ruleForm, redirect);
       } else {
         console.log('error submit!');
       }

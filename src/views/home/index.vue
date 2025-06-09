@@ -1,6 +1,6 @@
 <template>
   <div
-    class="home infinite-list"
+    class="infinite-list"
     v-infinite-scroll="load"
     :infinite-scroll-immediate="false"
   >
@@ -92,7 +92,6 @@
 
 <style scoped lang="scss">
   .infinite-list {
-    // height: 100vh;
     padding: 0;
     margin: 0;
     list-style: none;

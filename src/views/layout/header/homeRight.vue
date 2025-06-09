@@ -3,7 +3,7 @@
     <el-input
       v-model="input"
       style="width: 240px; margin-right: 20px"
-      placeholder="请输入"
+      :placeholder="$t('common.inputPlaceholder')"
       :suffix-icon="Search"
       @change="handelChange"
     />
@@ -30,22 +30,22 @@
     <el-dropdown @command="jumpPage" trigger="click">
       <div class="lang-selector">
         <span class="el-dropdown-link">
-          <el-avatar
-            src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-          />
+          <el-avatar :src="avatarUrl" />
         </span>
       </div>
       <template #dropdown>
         <el-dropdown-menu>
-          <el-dropdown-item command="my_Course">我的课程</el-dropdown-item>
+          <el-dropdown-item command="my_Course">
+            {{ $t('homePage.MyCourse') }}</el-dropdown-item
+          >
           <el-dropdown-item
             command="person_info"
             @click="router.push('/layout/personalCenter')"
-            >个人资料</el-dropdown-item
+            >{{ $t('homePage.personInfo') }}</el-dropdown-item
           >
-          <el-dropdown-item command="exit" @click="userLogout"
-            >安全退出</el-dropdown-item
-          >
+          <el-dropdown-item command="exit" @click="userLogout">{{
+            $t('homePage.quit')
+          }}</el-dropdown-item>
         </el-dropdown-menu>
       </template>
     </el-dropdown>
@@ -53,13 +53,14 @@
 </template>
 
 <script lang="ts" setup name="homeRight">
-  import { ref, computed } from 'vue';
+  import { ref, computed, watch } from 'vue';
   import { Search } from '@element-plus/icons-vue';
   import { ArrowDown } from '@element-plus/icons-vue';
   import { useI18n } from 'vue-i18n';
   import { useAuthStore } from '@/stores/auth';
   import emitter from '@/utils/emitter';
   import { useRouter } from 'vue-router';
+
   const { locale } = useI18n();
   const auth = useAuthStore();
   const input = ref('');
@@ -72,6 +73,21 @@
   type LangKey = keyof typeof languageMap;
   let currentLanguage = (localStorage.getItem('lang') as LangKey) || 'zh';
 
+  // 👇 默认头像地址
+  const DEFAULT_AVATAR =
+    'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png';
+  const avatarUrl = ref(DEFAULT_AVATAR);
+  // 页面加载后侦听 userInfo 自动赋值
+  watch(
+    () => auth.userInfo,
+    val => {
+      if (val) {
+        avatarUrl.value =
+          import.meta.env.VITE_API_BASE_URL + val.user_pic || DEFAULT_AVATAR;
+      }
+    },
+    { immediate: true },
+  );
   // 计算显示的文字
   const currentLanguageText = computed(() => languageMap[currentLanguage]);
 

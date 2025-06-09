@@ -1,11 +1,11 @@
 <template>
   <div class="all_course">
     <div class="left">
-      <p class="filter">课程筛选</p>
+      <p class="filter">{{ $t('common.CourseFilter') }}</p>
       <leftSearch></leftSearch>
     </div>
     <div class="result">
-      <p class="search_result">搜索到 {{ total }} 门相关课程</p>
+      <p class="search_result">{{ $t('common.CourseResult', { total }) }}</p>
       <rightReault @send-value="handleValue"></rightReault>
     </div>
   </div>
@@ -28,7 +28,6 @@
   const total = ref<number>(0);
   function handleValue(value: number) {
     total.value = value as number;
-    console.log('搜索到的课程数量:', total.value);
   }
 </script>
 

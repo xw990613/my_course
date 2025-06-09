@@ -3,7 +3,7 @@
     <svg class="icon" aria-hidden="true">
       <use xlink:href="#icon-zaixianjiaoyu"></use>
     </svg>
-    <span class="outer_title">学堂在线</span>
+    <span class="outer_title">{{ $t('homePage.SmartClassMatch') }}</span>
     <el-menu
       :default-active="activeIndex"
       class="el-menu-demo"
@@ -19,7 +19,9 @@
       <el-menu-item index="/layout/allCourse">
         {{ $t('homePage.Courses') }}
       </el-menu-item>
-      <el-menu-item index="/layout/questionnaire"> 调查问卷 </el-menu-item>
+      <el-menu-item index="/layout/questionnaire">
+        {{ $t('homePage.Questionnaire') }}
+      </el-menu-item>
       <el-menu-item index="/layout/school">
         {{ $t('homePage.PartnerSchool') }}
       </el-menu-item>

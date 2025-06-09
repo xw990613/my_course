@@ -13,7 +13,7 @@ export const useAuthStore = defineStore('auth', {
   },
   actions: {
     // 登录
-    async login(data: LoginRequest) {
+    async login(data: LoginRequest, redirect: string) {
       try {
         const result = await user_login(data);
         localStorage.setItem('token', result.token);
@@ -21,9 +21,14 @@ export const useAuthStore = defineStore('auth', {
           message: result.message,
           type: 'success',
         });
+        const safeRedirect =
+          redirect && redirect !== '/login' ? redirect : '/layout/home';
+
+        await router
+          .push(safeRedirect)
+          .catch(err => console.warn('跳转失败:', err));
         await this.getUserInfo();
         // 登录成功后调用获取用户信息
-        router.push('/layout');
       } catch (err: any) {
         ElMessage.error(err.message || '登录失败');
       }
@@ -57,5 +62,9 @@ export const useAuthStore = defineStore('auth', {
       this.userInfo = null;
       router.push('/login');
     },
+  },
+  persist: {
+    key: 'auth',
+    paths: ['token', 'userInfo'], // 指定哪些字段持久化
   },
 });

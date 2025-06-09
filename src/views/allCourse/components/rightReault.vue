@@ -4,9 +4,8 @@
       class="resultListCon"
       v-for="item in courseListDataItem"
       :key="item.id"
-      @click="handleClick(item)"
     >
-      <div class="leftImg">
+      <div class="leftImg" @click="handleClick(item)">
         <img :src="item.cover" />
       </div>
       <div class="rightcon">
@@ -19,8 +18,17 @@
         <div class="info">
           {{ item.short_intro }}
         </div>
+        <div class="evaluation">
+          <span class="recommend" @click="handleEvaluation(item, true)"
+            >👍 有用</span
+          >
+          <span class="Not-recommended" @click="handleEvaluation(item, false)"
+            >👎 无用</span
+          >
+        </div>
       </div>
     </div>
+    <el-button class="submit" @click="submitEvaluation">提交评估结果</el-button>
     <div class="demo-pagination-block" v-if="courseListDataItem.length > 0">
       <el-pagination
         v-model:current-page="page.currentPage"
@@ -49,7 +57,7 @@
   import { getCourseList } from '@/api/projectList';
   import type { getCourseListRequest } from '@/api/projectList';
   import { onMounted, reactive, ref } from 'vue';
-  import type { ComponentSize } from 'element-plus';
+  import { ElMessage, type ComponentSize } from 'element-plus';
   interface CourseList {
     status: number;
     org: number | string;
@@ -93,6 +101,11 @@
   const background = ref(false);
   const disabled = ref(false);
   const total = ref(0);
+  // 用于存储评估结果的数组
+  const evaluationSelections = ref<(boolean | null)[]>([]);
+  const courseIdIndexMap = ref<Record<number, number>>({});
+  const srlDimensionList = ref<string[]>([]);
+
   const handleSizeChange = (val: number) => {
     page.pageSize = val;
     page.currentPage = 1;
@@ -129,12 +142,21 @@
   const getCourseListItem = async (data: getCourseListRequest) => {
     Object.assign(courseList, page);
     const result = await getCourseList(data);
-    console.log('课程列表数据', result.data);
     // 清空数组并将获取到的数据添加进去
     courseListDataItem.length = 0; // 清空数组
     courseListDataItem.push(...result.data); // 展开获取的结果并加入数组
     total.value = result.total; // 更新总数
     emit('send-value', result.total);
+    if (total.value > 10) {
+      evaluationSelections.value = Array(10).fill(null);
+    } else {
+      evaluationSelections.value = Array(total.value).fill(null);
+    }
+    result.data.forEach((item, index) => {
+      courseIdIndexMap.value[item.id] = index;
+    });
+    srlDimensionList.value = [...result?.srlLabels];
+    console.log('获取到的课程列表数据', srlDimensionList.value);
   };
   const handleClick = (item: CourseListData) => {
     // 跳转到问卷详情页
@@ -143,6 +165,36 @@
   onMounted(() => {
     getCourseListItem(courseList);
   });
+
+  const submitEvaluation = async () => {
+    const selections = evaluationSelections.value;
+    if (selections.length === 0 || selections.some(s => s === null)) {
+      ElMessage.warning('请对前10条课程进行评价');
+      return;
+    }
+    const payload = {
+      srl_dimensions: srlDimensionList.value,
+      topk_selections: selections,
+      total_recommendations: selections.length,
+      total: total.value,
+    };
+    console.log('提交的评估结果', payload);
+    try {
+      // await postEvaluationResult(payload);
+      ElMessage.success('评估结果提交成功');
+    } catch (error) {
+      console.error('提交失败：', error);
+      ElMessage.error('提交失败，请稍后再试');
+    }
+  };
+
+  const handleEvaluation = (item: CourseListData, useful: boolean) => {
+    const index = courseIdIndexMap.value[item.id];
+    console.log('当前评估结果', useful, '对应的索引', index);
+    if (index !== undefined) {
+      evaluationSelections.value[index] = useful;
+    }
+  };
 </script>
 
 <style scoped lang="scss">
@@ -188,6 +240,19 @@
           line-clamp: 3; /* 标准属性 */
           -webkit-box-orient: vertical; /* 设置多行文本的排列方式为纵向 */
         }
+        .evaluation {
+          color: #999;
+          font-size: 14px;
+          display: flex;
+          align-items: center;
+          .recommend {
+            color: #67c23a; /* 绿色 */
+            margin-right: 30px;
+          }
+          .Not-recommended {
+            color: #f56c6c; /* 红色 */
+          }
+        }
       }
       .leftImg {
         border-radius: 6px;
@@ -209,5 +274,15 @@
   }
   .demo-pagination-block + .demo-pagination-block {
     margin-top: 10px;
+  }
+  .submit {
+    height: 40px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    background-color: #409eff;
+    color: #fff;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
   }
 </style>

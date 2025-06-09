@@ -1,54 +1,60 @@
 <template>
   <div class="personalInformation">
     <div class="personalTip">
-      <span class="title">个人信息</span>
-      <el-button type="primary" :icon="Edit" v-if="!isEdit" @click="handleClick"
-        >编辑</el-button
+      <span class="title"> {{ $t('personInfo.personInfo') }}</span>
+      <el-button
+        type="primary"
+        :icon="Edit"
+        v-if="!isEdit"
+        @click="handleClick"
+        >{{ $t('common.Edit') }}</el-button
       >
-      <el-button type="primary" @click="handelSave" v-else>保存</el-button>
+      <el-button type="primary" @click="handelSave" v-else>{{
+        $t('common.Save')
+      }}</el-button>
     </div>
     <div class="infoList" v-if="!isEdit">
       <ul class="ul1">
         <li>
-          <span>姓名</span>
+          <span>{{ $t('personInfo.Name') }}</span>
           <span>{{ formInline.username }}</span>
         </li>
         <li>
-          <span>学历</span>
+          <span>{{ $t('personInfo.EducationalQualifications') }}</span>
           <span>{{ formInline.educational }}</span>
         </li>
         <li>
-          <span>职位</span>
+          <span>{{ $t('personInfo.Position') }}</span>
           <span>{{ formInline.position }}</span>
         </li>
         <li>
-          <span>生日</span>
+          <span>{{ $t('personInfo.Birthday') }}</span>
           <span>{{ formInline.birthday }}</span>
         </li>
         <li>
-          <span>手机号</span>
+          <span>{{ $t('personInfo.PhoneNumber') }}</span>
           <span>{{ formInline.phone_number }}</span>
         </li>
       </ul>
       <ul class="ul2">
         <li>
-          <span>性别</span>
+          <span>{{ $t('personInfo.Gender') }}</span>
           <span>{{ formInline.gender }}</span>
         </li>
         <li>
-          <span>学校/公司</span>
+          <span>{{ $t('personInfo.School/Company') }}</span>
           <span>{{ formInline.school_compnay }}</span>
         </li>
         <li>
-          <span>工作年限</span>
+          <span>{{ $t('personInfo.WorkingYears') }}</span>
           <span>{{ formInline.working_years }}</span>
         </li>
         <li>
-          <span>地区</span>
+          <span>{{ $t('personInfo.Area') }}</span>
           <span>{{ formInline.countries_regions_name }}</span>
         </li>
         <li>
-          <span>邮箱</span>
+          <span>{{ $t('personInfo.Email') }}</span>
           <span>{{ formInline.email }}</span>
         </li>
       </ul>
@@ -57,88 +63,91 @@
       <el-form
         :inline="true"
         label-position="right"
-        label-width="100px"
+        :label-width="labelWidth"
         :model="formInline"
         class="demo-form-inline"
       >
-        <el-form-item label="姓名">
+        <el-form-item :label="$t('personInfo.Name')">
           <el-input
             v-model="formInline.username"
-            placeholder="请输入姓名"
+            :placeholder="$t('common.PleaseEnterName')"
             clearable
           />
         </el-form-item>
-        <el-form-item label="性别">
+        <el-form-item :label="$t('personInfo.Gender')">
           <el-select
             v-model="formInline.gender"
-            placeholder="请选择性别"
+            :placeholder="$t('common.PleaseSelectGender')"
             clearable
           >
-            <el-option label="男" value="male" />
-            <el-option label="女" value="female" />
+            <el-option :label="$t('option.Male')" value="Male" />
+            <el-option :label="$t('option.Female')" value="Female" />
           </el-select>
         </el-form-item>
-        <el-form-item label="学历">
+        <el-form-item :label="$t('personInfo.EducationalQualifications')">
           <el-select
             v-model="formInline.educational"
-            placeholder="请选择学历"
+            :placeholder="$t('common.PleaseSelectAcademicQualifications')"
             clearable
           >
-            <el-option label="初中" value="junior" />
-            <el-option label="高中" value="high" />
-            <el-option label="大专" value="college" />
-            <el-option label="本科" value="bachelor" />
-            <el-option label="研究生" value="master" />
-            <el-option label="博士" value="doctor" />
+            <el-option
+              :label="$t('option.JuniorHighSchool')"
+              value="Junior High School"
+            />
+            <el-option :label="$t('option.HighSchool')" value="High School" />
+            <el-option :label="$t('option.College')" value="College" />
+            <el-option :label="$t('option.Undergraduate')" value="Bachelor" />
+            <el-option :label="$t('option.postgraduate')" value="Master" />
+            <el-option :label="$t('option.PhD')" value="PhD" />
           </el-select>
         </el-form-item>
-        <el-form-item label="学校/公司">
+        <el-form-item :label="$t('personInfo.School/Company')">
           <el-input
             v-model="formInline.school_compnay"
-            placeholder="请输入学校/公司"
+            :placeholder="$t('common.PleaseEnterSchoolCompany')"
             clearable
           />
         </el-form-item>
-        <el-form-item label="职位">
+        <el-form-item :label="$t('personInfo.Position')">
           <el-input
             v-model="formInline.position"
-            placeholder="请输入职位"
+            :placeholder="$t('common.PleaseEnterPosition')"
             clearable
           />
         </el-form-item>
-        <el-form-item label="工作年限">
+        <el-form-item :label="$t('personInfo.WorkingYears')">
           <el-input
             v-model="formInline.working_years"
-            placeholder="请输入工作年限"
+            :placeholder="$t('common.PleaseEnterWorkingYears')"
             clearable
           />
         </el-form-item>
-        <el-form-item label="手机">
+        <el-form-item :label="$t('personInfo.PhoneNumber')">
           <el-input
             v-model="formInline.phone_number"
-            placeholder="请输入手机号"
+            :placeholder="$t('common.PleaseEnterPhoneNumber')"
             clearable
           />
         </el-form-item>
-        <el-form-item label="邮箱">
+        <el-form-item :label="$t('personInfo.Email')">
           <el-input
             v-model="formInline.email"
-            placeholder="请输入邮箱"
+            :placeholder="$t('common.PleaseEnterEmail')"
             clearable
           />
         </el-form-item>
 
-        <el-form-item label="生日">
+        <el-form-item :label="$t('personInfo.Birthday')">
           <el-date-picker
             v-model="formInline.birthday"
             format="YYYY-MM-DD"
             value-format="YYYY-MM-DD"
             type="date"
-            placeholder="请选择日期"
+            :placeholder="$t('common.PleaseSelectDate')"
             clearable
           />
         </el-form-item>
-        <el-form-item label="地区">
+        <el-form-item :label="$t('personInfo.Area')">
           <vue3-country-intl
             v-model="formInline.countries_regions"
             @onChange="handleGetCountry"
@@ -157,9 +166,10 @@
 
 <script setup lang="ts">
   import { Edit } from '@element-plus/icons-vue';
-  import { onMounted, reactive, ref } from 'vue';
+  import { computed, onMounted, reactive, ref } from 'vue';
   import { user_getInfo, user_updateInfo } from '@/api/user';
   import { ElMessage } from 'element-plus';
+  import { useAuthStore } from '@/stores/auth';
   const isEdit = ref(false);
   const formInline = reactive({
     username: '',
@@ -174,7 +184,10 @@
     phone_number: '',
     email: '',
   });
-
+  const auth = useAuthStore();
+  const labelWidth = computed(() => {
+    return localStorage.getItem('lang') === 'zh' ? '100px' : '200px';
+  });
   function handleClick() {
     isEdit.value = !isEdit.value;
   }
@@ -183,6 +196,7 @@
     try {
       const res = await user_updateInfo(formInline);
       ElMessage.success(res.message || '保存成功');
+      await auth.getUserInfo();
     } catch (error) {
       console.error('保存失败', error);
     }
@@ -195,7 +209,6 @@
   onMounted(async () => {
     try {
       const res = await user_getInfo();
-      console.log('获取信息', res);
       const {
         username,
         gender,
@@ -250,7 +263,7 @@
       margin-left: 100px;
     }
     .ul2 {
-      margin-left: 300px;
+      margin-left: 200px;
     }
     li:not(:first-child) {
       margin-top: 20px;
