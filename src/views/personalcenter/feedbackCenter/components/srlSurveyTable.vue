@@ -71,16 +71,16 @@
       list: Array<{
         id: number;
         user_id: number;
-        'Post-UsabilitySurvey': object | null;
-        'Pre-UsabilitySurvey': object | null;
-        SRLSurvey: object | null;
+        'Post-SRLSurvey': object | null;
+        'Pre-SRLSurvey': object | null;
+        UsabilitySurvey: object | null;
         submit_time: string;
       }>;
     };
   }>();
   const tableData = computed(() =>
     props.table3.list.map(item => {
-      const survey = item['SRLSurvey'];
+      const survey = item['UsabilitySurvey'];
       const array = survey
         ? Object.entries(survey).map(([key, value], index) => {
             const postKey = `q${index + 1}_score` as keyof typeof srlSurvey;
@@ -100,7 +100,6 @@
       };
     }),
   );
-  console.log(tableData, '@@@');
   const size = ref<ComponentSize>('default');
   const background = ref(false);
   const disabled = ref(false);

@@ -166,8 +166,8 @@
   const saveQuestionnaireData = async () => {
     try {
       const result = await saveQuestionnaire({
-        'Post-UsabilitySurvey': UsabilitySurveyData.value,
-        SRLSurvey: SRLSurveyData.value,
+        UsabilitySurvey: UsabilitySurveyData.value,
+        'Post-SRLSurvey': SRLSurveyData.value,
       });
       ElMessage.success(result.message);
       console.log('问卷保存成功:', result);

@@ -1,5 +1,5 @@
 <template>
-  <h2 class="page-title">Pre-UsabilitySurvey Table</h2>
+  <h2 class="page-title">Pre-SRLSurvey</h2>
   <div class="feedTablePre">
     <el-table
       :data="tableData"
@@ -14,7 +14,7 @@
             <h3
               style="text-align: center; margin-top: 16px; margin-bottom: 16px"
             >
-              Pre-UsabilitySurvey
+              Pre-SRLSurvey
             </h3>
             <el-table stripe :data="props?.row?.postSurveyData" :border="true">
               <el-table-column label="Question Number" prop="question_number" />
@@ -62,9 +62,9 @@
   import type {} from '@/api/avaluation';
   import dayjs from 'dayjs';
   import {
-    PostUsabilitySurvey,
+    PostSRLSurvey,
     caculateExamination,
-    PostUsabilitySurveySRLdimension,
+    PostSRLSurveySRLdimension,
   } from '../const/index.ts';
 
   const pageTable2 = ref({ pageNum: 1, pageSize: 10 });
@@ -74,24 +74,23 @@
       list: Array<{
         id: number;
         user_id: number;
-        'Post-UsabilitySurvey': object | null;
-        'Pre-UsabilitySurvey': object | null;
-        SRLSurvey: object | null;
+        'Post-SRLSurvey': object | null;
+        'Pre-SRLSurvey': object | null;
+        UsabilitySurvey: object | null;
         submit_time: string;
       }>;
     };
   }>();
   const tableData = computed(() =>
     props.table2.list.map(item => {
-      const survey = item['Pre-UsabilitySurvey'];
+      const survey = item['Pre-SRLSurvey'];
       const array = survey
         ? Object.entries(survey).map(([key, value], index) => {
-            const postKey =
-              `q${index + 1}_score` as keyof typeof PostUsabilitySurvey;
-            const content = PostUsabilitySurvey[postKey];
+            const postKey = `q${index + 1}_score` as keyof typeof PostSRLSurvey;
+            const content = PostSRLSurvey[postKey];
             const postKeySRL =
-              `q${index + 1}_score` as keyof typeof PostUsabilitySurveySRLdimension;
-            const srlDimension = PostUsabilitySurveySRLdimension[postKeySRL];
+              `q${index + 1}_score` as keyof typeof PostSRLSurveySRLdimension;
+            const srlDimension = PostSRLSurveySRLdimension[postKeySRL];
             return {
               question_number: key,
               score: value,

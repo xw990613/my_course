@@ -24,18 +24,20 @@
 <script setup lang="ts">
   import { ElMessage } from 'element-plus';
   import { ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
+
+  const { t } = useI18n();
   const emit = defineEmits<{
     (e: 'submitSRLSurvey', payload: Record<string, number>): void;
   }>();
   const questions = ref([
-    { label: '我会为自己的学习设定清晰具体的目标。', score: 0 },
-    { label: '我知道如何根据任务调整我的学习计划。', score: 0 },
-    { label: '我能主动监控自己的学习进度。', score: 0 },
-    { label: '我会在学习过程中评估自己的表现并做出调整。', score: 0 },
-    { label: '遇到困难时，我知道可以向谁寻求帮助。', score: 0 },
-    { label: '我愿意向他人寻求学习建议或支持。', score: 0 },
-    { label: '我了解哪些学习策略最适合我自己。', score: 0 },
-    { label: '我能够根据不同任务选择有效的学习方法。', score: 0 },
+    { label: t('questionnaire.srlSurvey.q1_score'), score: 0 },
+    { label: t('questionnaire.srlSurvey.q2_score'), score: 0 },
+    { label: t('questionnaire.srlSurvey.q3_score'), score: 0 },
+    { label: t('questionnaire.srlSurvey.q4_score'), score: 0 },
+    { label: t('questionnaire.srlSurvey.q5_score'), score: 0 },
+    { label: t('questionnaire.srlSurvey.q6_score'), score: 0 },
+    { label: t('questionnaire.srlSurvey.q7_score'), score: 0 },
   ]);
 
   const submitSurvey = async () => {

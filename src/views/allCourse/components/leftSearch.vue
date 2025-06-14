@@ -1,21 +1,50 @@
 <template>
   <div class="leftSearch" style="max-width: 230px">
-    <el-card v-for="item in allData" :key="item.id">
-      <template #header>
-        <div class="card-header">
-          <p class="t1">{{ item.label }}</p>
+    <!-- 加载中骨架屏 -->
+    <template v-if="loading">
+      <el-skeleton
+        v-for="n in 4"
+        :key="'skeleton-filter-' + n"
+        :throttle="{ initVal: true, leading: 1000 }"
+        animated
+      >
+        <template #template>
+          <el-card>
+            <template #header>
+              <el-skeleton-item variant="text" style="width: 60%" />
+            </template>
+            <div class="item t3">
+              <el-skeleton-item
+                v-for="i in 5"
+                :key="i"
+                variant="text"
+                style="width: 50px; margin-right: 10px"
+              />
+            </div>
+          </el-card>
+        </template>
+      </el-skeleton>
+    </template>
+
+    <!-- 加载完成后的真实内容 -->
+    <template v-else>
+      <el-card v-for="item in allData" :key="item.id">
+        <template #header>
+          <div class="card-header">
+            <p class="t1">{{ item.label }}</p>
+          </div>
+        </template>
+        <div class="item t3">
+          <span
+            v-for="i in item.list"
+            :class="{ active: i.selected }"
+            :key="i.id"
+            @click="selectItem(i, item)"
+            >{{ language === 'zh' ? i.name_zh : i.name_en }}</span
+          >
         </div>
-      </template>
-      <div class="item t3">
-        <span
-          v-for="i in item.list"
-          :class="{ active: i.selected }"
-          :key="i.id"
-          @click="selectItem(i, item)"
-          >{{ language === 'zh' ? i.name_zh : i.name_en }}</span
-        >
-      </div>
-    </el-card>
+      </el-card>
+    </template>
   </div>
 </template>
 
@@ -29,28 +58,24 @@
   import { getProjectList } from '@/api/projectList';
   import { reactive, onMounted, ref, computed } from 'vue';
   import emitter from '@/utils/emitter';
-  // eslint-disable-next-line prefer-const
-  let classify_id = ref(0);
-  // eslint-disable-next-line prefer-const
-  let status_id = ref(0);
-  // eslint-disable-next-line prefer-const
-  let org_id = ref(0);
-  // eslint-disable-next-line prefer-const
-  let selling_type_id = ref(0);
 
-  // 定义项的类型
+  let classify_id = ref(0);
+  let status_id = ref(0);
+  let org_id = ref(0);
+  let selling_type_id = ref(0);
+  const loading = ref(true); // 控制骨架屏展示
+
   interface Item {
     id: number;
     name_zh: string;
     name_en: string;
-    selected?: boolean; // 添加选中属性
+    selected?: boolean;
   }
 
-  // 定义每个分类的类型
   interface Category {
     id: number;
     label: string;
-    list: Item[]; // 确保 list 是 Item 数组
+    list: Item[];
   }
 
   const language = computed(() => {
@@ -77,41 +102,36 @@
     label: language.value === 'zh' ? '课程类型' : 'Products',
     list: [{ id: 0, name_zh: '全部', name_en: 'all', selected: true }],
   };
-  // 使用 reactive 使 allData 成为响应式数据
-  const allData = reactive([classify_list, status, org, selling_type]);
-  const getProject = async () => {
-    const { data } = await getProjectList();
 
-    // 处理数据
-    // 使用响应式方式更新每个分类
+  const allData = reactive([classify_list, status, org, selling_type]);
+
+  const getProject = async () => {
+    loading.value = true;
+    const { data } = await getProjectList();
+    await new Promise(resolve => setTimeout(resolve, 300)); // 模拟加载延迟，展示骨架屏
     allData[0].list = classify_list.list.concat(data.classify_list);
     allData[1].list = status.list.concat(data.status);
     allData[2].list = org.list.concat(data.org);
     allData[3].list = selling_type.list.concat(data.selling_type);
+    loading.value = false;
   };
+
   const selectItem = (i: any, item: any) => {
-    // 取消选中其他项
     item.list.forEach((i: any) => {
       i.selected = false;
     });
-    // 选中当前项
     i.selected = true;
-    // 处理选中项的逻辑
-    // 例如，发送请求或更新状态等
 
     if (item.id === 1) {
-      // 处理学科分类的选中项
       classify_id.value = i.id;
     } else if (item.id === 2) {
-      // 处理上课状态的选中项
       status_id.value = i.id;
     } else if (item.id === 3) {
-      // 处理学校的选中项
       org_id.value = i.id;
     } else if (item.id === 4) {
-      // 处理课程类型的选中项
       selling_type_id.value = i.id;
     }
+
     emitter.emit('sendClassifyData', {
       classify: classify_id.value,
       status: status_id.value,
@@ -132,8 +152,8 @@
     border: 1px solid var(--el-card-border-color);
     .item {
       display: flex;
-      gap: 10px; /* 为标签项之间增加间距 */
-      flex-wrap: wrap; /* 允许标签项换行 */
+      gap: 10px;
+      flex-wrap: wrap;
       cursor: pointer;
     }
     .item span:hover {

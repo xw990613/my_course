@@ -5,9 +5,20 @@
       <el-form-item
         v-for="(item, index) in questionnaire"
         :key="index"
-        :label="item.text"
+        :label="item.label"
       >
-        <el-rate v-model="item.score" :max="5" show-text></el-rate>
+        <el-rate
+          v-model="item.score"
+          :max="5"
+          show-text
+          :texts="[
+            'Strongly Disagree',
+            'Disagree',
+            'Generally',
+            'Agree',
+            'Strongly Agree',
+          ]"
+        ></el-rate>
       </el-form-item>
 
       <el-button type="primary" @click="submitForm">提交</el-button>
@@ -23,49 +34,51 @@
 
 <script setup lang="ts">
   import { reactive } from 'vue';
-  import { ElForm, ElFormItem, ElRate, ElButton } from 'element-plus';
+  import {
+    ElForm,
+    ElFormItem,
+    ElRate,
+    ElButton,
+    ElMessage,
+  } from 'element-plus';
   import { useRouter } from 'vue-router';
-  import { saveQuestionnaire } from '@/api/projectList';
+  import { saveQuestionnaire } from '@/api/avaluation';
+  import { useI18n } from 'vue-i18n';
+  import { useAuthStore } from '@/stores/auth';
+  const auth = useAuthStore();
+  console.log(auth.userInfo, '@@@');
+  const { t } = useI18n();
   const router = useRouter();
+
   // 定义表单数据
   const questionnaire = reactive([
-    {
-      text: '在学习过程中，我是否经常因为缺乏动力、兴趣或目标而难以主动投入？',
-      score: 0,
-    },
-    {
-      text: '我是否会为自己的学习设定阶段目标，并制定清晰的计划以实现长短期目标？',
-      score: 0,
-    },
-    {
-      text: '我是否能合理安排每天的时间，避免拖延，提高任务完成的效率与节奏？',
-      score: 0,
-    },
-    {
-      text: '在学习中，我是否会关注自己的注意力状态，并定期自我评估学习效果？',
-      score: 0,
-    },
-    {
-      text: '当我遇到困难时，我是否愿意主动提问或寻求他人的帮助与反馈？',
-      score: 0,
-    },
-    {
-      text: '我是否擅长使用合适的学习策略或方法来完成任务，提升解决问题的能力？',
-      score: 0,
-    },
-    {
-      text: '我是否会在学习后反思经验，总结不足，并尝试改进学习方法？',
-      score: 0,
-    },
+    { label: t('questionnaire.srlSurvey.q1_score'), score: 0 },
+    { label: t('questionnaire.srlSurvey.q2_score'), score: 0 },
+    { label: t('questionnaire.srlSurvey.q3_score'), score: 0 },
+    { label: t('questionnaire.srlSurvey.q4_score'), score: 0 },
+    { label: t('questionnaire.srlSurvey.q5_score'), score: 0 },
+    { label: t('questionnaire.srlSurvey.q6_score'), score: 0 },
+    { label: t('questionnaire.srlSurvey.q7_score'), score: 0 },
   ]);
 
   // 提交表单的处理函数
   const submitForm = async () => {
+    const unfilled = questionnaire.find(q => q.score === 0);
+    if (unfilled) {
+      ElMessage.warning('请为每一道题目进行评分后再提交～');
+      return;
+    }
+    const payload = Object.fromEntries(
+      questionnaire.map((q, i) => [`q${i + 1}_score`, q.score]),
+    );
     try {
-      await saveQuestionnaire(questionnaire);
+      const result = await saveQuestionnaire({
+        'Pre-SRLSurvey': payload,
+      });
+      ElMessage.success(result.message);
       router.push('/layout/home');
-    } catch (error) {
-      console.error('问卷提交失败', error);
+    } catch (error: any) {
+      ElMessage.error(error.message);
     }
   };
 </script>
@@ -73,7 +86,7 @@
 <style scoped lang="scss">
   .survey-container {
     width: 80%;
-    max-width: 800px;
+    max-width: 1100px;
     margin: 50px auto;
     padding: 30px;
     background-color: #ffffff;

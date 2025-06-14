@@ -59,3 +59,29 @@ export function user_updateInfo(data: any) {
     data,
   });
 }
+
+// 收藏课程
+export function collectCourse(data: any) {
+  return request({
+    url: '/user/favoriteCourse',
+    method: 'post',
+    data,
+  });
+}
+
+// 获取课程收藏列表
+export function getCollectCourse() {
+  return request({
+    url: '/getMyCourses',
+    method: 'get',
+  });
+}
+
+// 取消收藏
+export function cancelCollectCourse(data: any) {
+  return request({
+    url: '/cancelCollectCourse',
+    method: 'post',
+    data,
+  });
+}

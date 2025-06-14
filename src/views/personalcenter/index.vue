@@ -207,4 +207,7 @@
     text-overflow: ellipsis;
     overflow: hidden;
   }
+  .el-col-3 {
+    max-width: 15.5%;
+  }
 </style>

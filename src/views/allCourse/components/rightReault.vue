@@ -1,35 +1,75 @@
 <template>
   <div class="rightReault">
-    <div
-      class="resultListCon"
-      v-for="item in courseListDataItem"
-      :key="item.id"
-    >
-      <div class="leftImg" @click="handleClick(item)">
-        <img :src="item.cover" />
+    <!-- 骨架屏展示 -->
+    <template v-if="loading">
+      <div
+        class="resultListCon"
+        v-for="n in page.pageSize"
+        :key="'skeleton-' + n"
+      >
+        <el-skeleton animated :throttle="{ initVal: true, leading: 1000 }">
+          <template #template>
+            <div class="resultListCon">
+              <div class="leftImg">
+                <el-skeleton-item
+                  variant="image"
+                  style="width: 266px; height: 150px"
+                />
+              </div>
+              <div class="rightcon">
+                <el-skeleton-item
+                  variant="text"
+                  style="width: 60%; margin-bottom: 10px"
+                />
+                <el-skeleton-item variant="text" style="width: 90%" />
+                <el-skeleton-item variant="text" style="width: 80%" />
+              </div>
+            </div>
+          </template>
+        </el-skeleton>
       </div>
-      <div class="rightcon">
-        <div class="titletext">{{ item.course_name }}</div>
-        <div class="teacher">
-          <span class="teacher_con">{{ item.teacher }}</span>
-          <span class="org_con">{{ item.school_name }}</span>
-          <span>{{ item.count }}人</span>
+    </template>
+
+    <!-- 正常数据展示 -->
+    <template v-else>
+      <div
+        class="resultListCon"
+        v-for="(item, index) in courseListDataItem"
+        :key="item.id"
+      >
+        <div class="leftImg" @click="handleClick(item)">
+          <img :src="item.cover" />
         </div>
-        <div class="info">
-          {{ item.short_intro }}
-        </div>
-        <div class="evaluation">
-          <span class="recommend" @click="handleEvaluation(item, true)"
-            >👍 有用</span
-          >
-          <span class="Not-recommended" @click="handleEvaluation(item, false)"
-            >👎 无用</span
-          >
+        <div class="rightcon">
+          <div class="titletext">{{ item.course_name }}</div>
+          <div class="teacher">
+            <span class="teacher_con">{{ item.teacher }}</span>
+            <span class="org_con">{{ item.school_name }}</span>
+            <span class="person">{{ item.count }}人</span>
+            <span @click="hendleCollect(item)">收藏</span>
+          </div>
+          <div class="info">{{ item.short_intro }}</div>
+          <div class="evaluation" v-if="index < 10 && page.currentPage === 1">
+            <span class="recommend" @click="handleEvaluation(item, true)">
+              👍 有用
+            </span>
+            <span
+              class="Not-recommended"
+              @click="handleEvaluation(item, false)"
+            >
+              👎 无用
+            </span>
+          </div>
         </div>
       </div>
-    </div>
+    </template>
+
     <el-button class="submit" @click="submitEvaluation">提交评估结果</el-button>
-    <div class="demo-pagination-block" v-if="courseListDataItem.length > 0">
+
+    <div
+      class="demo-pagination-block"
+      v-if="!loading && courseListDataItem.length > 0"
+    >
       <el-pagination
         v-model:current-page="page.currentPage"
         v-model:page-size="page.pageSize"
@@ -56,8 +96,10 @@
   import emitter from '@/utils/emitter';
   import { getCourseList } from '@/api/projectList';
   import type { getCourseListRequest } from '@/api/projectList';
+  import { collectCourse } from '@/api/user';
   import { onMounted, reactive, ref } from 'vue';
   import { ElMessage, type ComponentSize } from 'element-plus';
+
   interface CourseList {
     status: number;
     org: number | string;
@@ -92,6 +134,7 @@
     classify: number[];
     count: number;
   }
+
   const courseListDataItem = reactive<CourseListData[]>([]);
   const page = reactive({
     currentPage: 1,
@@ -101,7 +144,8 @@
   const background = ref(false);
   const disabled = ref(false);
   const total = ref(0);
-  // 用于存储评估结果的数组
+  const loading = ref(true); // 控制骨架屏加载状态
+
   const evaluationSelections = ref<(boolean | null)[]>([]);
   const courseIdIndexMap = ref<Record<number, number>>({});
   const srlDimensionList = ref<string[]>([]);
@@ -111,12 +155,12 @@
     page.currentPage = 1;
     getCourseListItem(courseList);
   };
+
   const handleCurrentChange = (val: number) => {
     page.currentPage = val;
     getCourseListItem(courseList);
   };
 
-  // 绑定事件
   emitter.on('sendClassifyData', value => {
     Object.assign(courseList, value);
     Object.assign(page, {
@@ -125,7 +169,7 @@
     });
     getCourseListItem(courseList);
   });
-  // 绑定事件
+
   emitter.on('sendInput', value => {
     Object.assign(courseList, value);
     Object.assign(page, {
@@ -134,34 +178,36 @@
     });
     getCourseListItem(courseList);
   });
-  // 声明 emit 的事件和类型
+
   const emit = defineEmits<{
     (e: 'send-value', payload: number): void;
   }>();
-  // 获取项目列表
+
   const getCourseListItem = async (data: getCourseListRequest) => {
+    loading.value = true;
     Object.assign(courseList, page);
     const result = await getCourseList(data);
-    // 清空数组并将获取到的数据添加进去
-    courseListDataItem.length = 0; // 清空数组
-    courseListDataItem.push(...result.data); // 展开获取的结果并加入数组
-    total.value = result.total; // 更新总数
+    // 模拟延迟，方便看到骨架动画
+    await new Promise(resolve => setTimeout(resolve, 600));
+    courseListDataItem.length = 0;
+    courseListDataItem.push(...result.data);
+    total.value = result.total;
     emit('send-value', result.total);
-    if (total.value > 10) {
-      evaluationSelections.value = Array(10).fill(null);
-    } else {
-      evaluationSelections.value = Array(total.value).fill(null);
-    }
+    loading.value = false;
+
+    evaluationSelections.value =
+      total.value > 10 ? Array(10).fill(null) : Array(total.value).fill(null);
+
     result.data.forEach((item, index) => {
       courseIdIndexMap.value[item.id] = index;
     });
     srlDimensionList.value = [...result?.srlLabels];
-    console.log('获取到的课程列表数据', srlDimensionList.value);
   };
+
   const handleClick = (item: CourseListData) => {
-    // 跳转到问卷详情页
     window.location.href = item.src;
   };
+
   onMounted(() => {
     getCourseListItem(courseList);
   });
@@ -178,21 +224,26 @@
       total_recommendations: selections.length,
       total: total.value,
     };
-    console.log('提交的评估结果', payload);
     try {
       // await postEvaluationResult(payload);
       ElMessage.success('评估结果提交成功');
     } catch (error) {
-      console.error('提交失败：', error);
       ElMessage.error('提交失败，请稍后再试');
     }
   };
 
   const handleEvaluation = (item: CourseListData, useful: boolean) => {
     const index = courseIdIndexMap.value[item.id];
-    console.log('当前评估结果', useful, '对应的索引', index);
     if (index !== undefined) {
       evaluationSelections.value[index] = useful;
+    }
+  };
+
+  const hendleCollect = async (item: CourseListData) => {
+    try {
+      await collectCourse({ courseId: item.id });
+    } catch (error) {
+      console.log(error);
     }
   };
 </script>
@@ -225,7 +276,8 @@
             margin-right: 32px;
             padding-right: 32px;
           }
-          .org_con {
+          .org_con,
+          .person {
             margin-right: 32px;
           }
         }
@@ -234,11 +286,11 @@
           font-size: 14px;
           height: 66px;
           line-height: 22px;
-          overflow: hidden; /* 隐藏超出部分 */
-          display: -webkit-box; /* 使元素成为伸缩盒子 */
-          -webkit-line-clamp: 3; /* 限制最多显示三行 */
-          line-clamp: 3; /* 标准属性 */
-          -webkit-box-orient: vertical; /* 设置多行文本的排列方式为纵向 */
+          overflow: hidden;
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          line-clamp: 3;
+          -webkit-box-orient: vertical;
         }
         .evaluation {
           color: #999;
@@ -246,11 +298,11 @@
           display: flex;
           align-items: center;
           .recommend {
-            color: #67c23a; /* 绿色 */
+            color: #67c23a;
             margin-right: 30px;
           }
           .Not-recommended {
-            color: #f56c6c; /* 红色 */
+            color: #f56c6c;
           }
         }
       }

@@ -18,3 +18,4 @@ const i18n = createI18n({
 });
 
 export default i18n;
+export const i18nInstance = i18n; // 给 TypeScript 模块中调用的

@@ -1,49 +1,50 @@
-export const PostUsabilitySurvey = {
-  q1_score: '我会为自己的学习设定明确的目标。',
-  q2_score: '我知道如何根据任务调整学习计划。',
-  q3_score: '我能主动监控自己的学习进度。',
-  q4_score: '我会在学习过程中评估自己并做出调整。',
-  q5_score: '我经常反思我的学习策略。',
-  q6_score: '我对学习结果有清晰的预期。',
-  q7_score: '我能自觉管理学习时间和精力。',
-  q8_score: '我会寻求反馈以提升学习效果。',
+import { i18nInstance } from '@/locals/index.ts';
+
+const t = i18nInstance.global.t;
+export const PostSRLSurvey = {
+  q1_score: t('questionnaire.srlSurvey.q1_score'),
+  q2_score: t('questionnaire.srlSurvey.q2_score'),
+  q3_score: t('questionnaire.srlSurvey.q3_score'),
+  q4_score: t('questionnaire.srlSurvey.q4_score'),
+  q5_score: t('questionnaire.srlSurvey.q5_score'),
+  q6_score: t('questionnaire.srlSurvey.q6_score'),
+  q7_score: t('questionnaire.srlSurvey.q7_score'),
 };
 
-export const PostUsabilitySurveySRLdimension = {
-  q1_score: 'Goal Setting', // 我会为自己的学习设定明确的目标。
-  q2_score: 'Planning', // 我知道如何根据任务调整学习计划。
-  q3_score: 'Monitoring', // 我能主动监控自己的学习进度。
-  q4_score: 'Self-Evaluation', // 我会在学习过程中评估自己并做出调整。
-  q5_score: 'Strategy Use', // 我经常反思我的学习策略。
-  q6_score: 'Outcome Evaluation', // 我对学习结果有清晰的预期。
-  q7_score: 'Time Management', // 我能自觉管理学习时间和精力。
-  q8_score: 'Help Seeking', // 我会寻求反馈以提升学习效果。
+export const PostSRLSurveySRLdimension = {
+  q1_score: t('questionnaire.dimension.q1_score'),
+  q2_score: t('questionnaire.dimension.q2_score'),
+  q3_score: t('questionnaire.dimension.q3_score'),
+  q4_score: t('questionnaire.dimension.q4_score'),
+  q5_score: t('questionnaire.dimension.q5_score'),
+  q6_score: t('questionnaire.dimension.q6_score'),
+  q7_score: t('questionnaire.dimension.q7_score'),
 };
 
 export const srlSurvey = {
-  q1_score: '系统界面易于理解。',
-  q2_score: '我能顺利完成系统中的各项操作。',
-  q3_score: '关键词和SRL标签解释清晰易懂。',
-  q4_score: '推荐的课程内容与我的学习目标一致。',
-  q5_score: '我能独立使用该系统，无需外部帮助。',
-  q6_score: '系统加载和响应速度令人满意。',
-  q7_score: '我愿意再次使用该推荐系统。',
-  q8_score: '我会向他人推荐此系统。',
+  q1_score: t('questionnaire.UsabilitySurvey.q1_score'),
+  q2_score: t('questionnaire.UsabilitySurvey.q2_score'),
+  q3_score: t('questionnaire.UsabilitySurvey.q3_score'),
+  q4_score: t('questionnaire.UsabilitySurvey.q4_score'),
+  q5_score: t('questionnaire.UsabilitySurvey.q5_score'),
+  q6_score: t('questionnaire.UsabilitySurvey.q6_score'),
+  q7_score: t('questionnaire.UsabilitySurvey.q7_score'),
+  q8_score: t('questionnaire.UsabilitySurvey.q8_score'),
 };
 
 export function caculateExamination(score: number): string {
   switch (score) {
     case 5:
-      return '非常同意';
+      return t('questionnaire.Satisfaction.StronglyAgree');
     case 4:
-      return '同意';
+      return t('questionnaire.Satisfaction.Agree');
     case 3:
-      return '一般';
+      return t('questionnaire.Satisfaction.generally');
     case 2:
-      return '不同意';
+      return t('questionnaire.Satisfaction.disagree');
     case 1:
-      return '非常不同意';
+      return t('questionnaire.Satisfaction.StronglyDisagree');
     default:
-      return '无效分数';
+      return t('questionnaire.Satisfaction.InvalidScore');
   }
 }

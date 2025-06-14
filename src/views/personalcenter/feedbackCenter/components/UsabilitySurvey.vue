@@ -24,19 +24,22 @@
 <script setup lang="ts">
   import { ElMessage } from 'element-plus';
   import { ref, defineEmits } from 'vue';
+  import { useI18n } from 'vue-i18n';
+
+  const { t } = useI18n();
   const emit = defineEmits<{
     (e: 'submitUsabilitySurvey', payload: Record<string, number>): void;
   }>();
 
   const questions = ref([
-    { label: '系统界面易于理解。', score: 0 },
-    { label: '我能顺利完成系统中的各项操作。', score: 0 },
-    { label: '关键词和SRL标签解释清晰易懂。', score: 0 },
-    { label: '推荐的课程内容与我的学习目标一致。', score: 0 },
-    { label: '我能独立使用该系统，无需外部帮助。', score: 0 },
-    { label: '系统加载和响应速度令人满意。', score: 0 },
-    { label: '我愿意再次使用该推荐系统。', score: 0 },
-    { label: '我会向他人推荐此系统。', score: 0 },
+    { label: t('questionnaire.UsabilitySurvey.q1_score'), score: 0 },
+    { label: t('questionnaire.UsabilitySurvey.q2_score'), score: 0 },
+    { label: t('questionnaire.UsabilitySurvey.q3_score'), score: 0 },
+    { label: t('questionnaire.UsabilitySurvey.q4_score'), score: 0 },
+    { label: t('questionnaire.UsabilitySurvey.q5_score'), score: 0 },
+    { label: t('questionnaire.UsabilitySurvey.q6_score'), score: 0 },
+    { label: t('questionnaire.UsabilitySurvey.q7_score'), score: 0 },
+    { label: t('questionnaire.UsabilitySurvey.q8_score'), score: 0 },
   ]);
 
   const submitSurvey = () => {

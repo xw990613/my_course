@@ -29,6 +29,13 @@
         </div>
       </div>
     </div>
+    <div
+      class="bottom-loading"
+      v-loading="loading"
+      element-loading-text="Loading..."
+      element-loading-teleported="false"
+    ></div>
+    <p v-if="!hasMore" style="text-align: center">No more</p>
   </div>
 </template>
 
@@ -42,9 +49,12 @@
   import { reactive, ref, onMounted } from 'vue';
   import Carousel from './Carousel.vue';
   import Partnter from './Partnter.vue';
-  import { getQuestionnaireList, getQuestionnaire } from '@/api/projectList';
+  import { getQuestionnaireList } from '@/api/projectList';
   import type { questionnaireData, CourseListData } from '@/api/projectList';
-  console.log('我执行了');
+  import { getHomeQuestionnaire } from '@/api/avaluation';
+  import { useI18n } from 'vue-i18n';
+
+  const { t } = useI18n();
   let questionnaire: questionnaireData[] = [];
   const page = reactive({
     pageSize: 10,
@@ -56,13 +66,22 @@
   // 4. 加载状态，防止重复加载
   const loading = ref(false);
 
+  const PostSRLSurveySRLdimension = {
+    q1_score: t('questionnaire.srlSurvey.q1_score'),
+    q2_score: t('questionnaire.srlSurvey.q2_score'),
+    q3_score: t('questionnaire.srlSurvey.q3_score'),
+    q4_score: t('questionnaire.srlSurvey.q4_score'),
+    q5_score: t('questionnaire.srlSurvey.q5_score'),
+    q6_score: t('questionnaire.srlSurvey.q6_score'),
+    q7_score: t('questionnaire.srlSurvey.q7_score'),
+  };
+
   const load = async () => {
     if (loading.value || !hasMore.value) return; // 防止重复或无更多数据
     loading.value = true;
     try {
       const res = await getQuestionnaireList({ ...page, questionnaire });
       const list = res?.data || [];
-      console.log('获取问卷数据', list);
       if (list.length === 0) {
         hasMore.value = false; // 没有更多数据
       } else {
@@ -81,13 +100,26 @@
   };
   onMounted(async () => {
     try {
-      const res = await getQuestionnaire();
-      questionnaire = res?.data || [];
+      const res = await getHomeQuestionnaire();
+      questionnaire = transformToTextScoreArray(
+        res?.data,
+        PostSRLSurveySRLdimension,
+      );
+
       load(); // 初始加载
     } catch (error) {
       console.error('获取问卷数据失败', error);
     }
   });
+  function transformToTextScoreArray(
+    data: Record<string, number>,
+    textMap: Record<string, string>,
+  ): { text: string; score: number }[] {
+    return Object.entries(data).map(([key, score]) => ({
+      text: textMap[key] || key,
+      score,
+    }));
+  }
 </script>
 
 <style scoped lang="scss">
@@ -95,6 +127,8 @@
     padding: 0;
     margin: 0;
     list-style: none;
+    position: relative;
+    min-height: 180px;
   }
   .infinite-list .infinite-list-item {
     display: flex;
@@ -172,5 +206,10 @@
         }
       }
     }
+  }
+  .bottom-loading {
+    height: 180px;
+    position: relative; // 必须要有
+    text-align: center;
   }
 </style>

@@ -1,11 +1,12 @@
 <template>
   <div class="outer">
     <el-input
+      v-if="route.fullPath === '/layout/allCourse'"
       v-model="input"
       style="width: 240px; margin-right: 20px"
       :placeholder="$t('common.inputPlaceholder')"
       :suffix-icon="Search"
-      @change="handelChange"
+      @keyup.enter="handelChange"
     />
     <el-dropdown @command="changeType" trigger="click">
       <div class="lang-selector">
@@ -59,8 +60,8 @@
   import { useI18n } from 'vue-i18n';
   import { useAuthStore } from '@/stores/auth';
   import emitter from '@/utils/emitter';
-  import { useRouter } from 'vue-router';
-
+  import { useRouter, useRoute } from 'vue-router';
+  const route = useRoute();
   const { locale } = useI18n();
   const auth = useAuthStore();
   const input = ref('');
@@ -72,7 +73,7 @@
   } as const;
   type LangKey = keyof typeof languageMap;
   let currentLanguage = (localStorage.getItem('lang') as LangKey) || 'zh';
-
+  console.log(route.fullPath, '@@@');
   // 👇 默认头像地址
   const DEFAULT_AVATAR =
     'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png';

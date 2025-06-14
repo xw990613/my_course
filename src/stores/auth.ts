@@ -21,14 +21,20 @@ export const useAuthStore = defineStore('auth', {
           message: result.message,
           type: 'success',
         });
-        const safeRedirect =
-          redirect && redirect !== '/login' ? redirect : '/layout/home';
-
-        await router
-          .push(safeRedirect)
-          .catch(err => console.warn('跳转失败:', err));
+        // ✅ 等用户信息获取后再跳转
         await this.getUserInfo();
-        // 登录成功后调用获取用户信息
+
+        // ✅ 判断新用户状态
+        if (this.userInfo?.isNewUser === 0) {
+          await router.push('/layout/questionnaire');
+        } else {
+          const safeRedirect =
+            redirect && redirect !== '/login' ? redirect : '/layout/home';
+
+          await router
+            .push(safeRedirect)
+            .catch(err => console.warn('跳转失败:', err));
+        }
       } catch (err: any) {
         ElMessage.error(err.message || '登录失败');
       }
