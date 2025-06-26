@@ -9,6 +9,7 @@ import i18n from './locals/index.ts';
 import Vue3CountryIntl from 'vue3-country-intl';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 import * as echarts from 'echarts';
+import '@/assets/font/iconfont.css';
 // 引入css
 import 'vue3-country-intl/lib/vue3-country-intl.css';
 const app = createApp(App);

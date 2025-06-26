@@ -1,11 +1,11 @@
 <template>
   <div class="feedback-header">
-    <h2 class="page-title">反馈中心</h2>
+    <h2 class="page-title">{{ $t('common.FeedbackCenter') }}</h2>
     <p class="page-description">
-      欢迎来到反馈中心！我们将收集您对系统使用体验及学习能力的主观反馈，以优化推荐算法与用户体验。
+      {{ $t('common.description') }}
     </p>
     <p class="page-description">
-      点击下方按钮填写问卷，提交后将在下方图表中查看您的反馈结果与趋势。
+      {{ $t('common.fillIn') }}
     </p>
     <el-button
       type="primary"
@@ -13,7 +13,7 @@
       class="open-button"
       @click="drawer2 = true"
     >
-      填写反馈问卷
+      {{ $t('common.fillQuestionnaire') }}
     </el-button>
     <el-drawer
       v-model="drawer2"
@@ -23,15 +23,18 @@
       append-to-body
     >
       <template #header>
-        <h4>系统可用性调查问卷</h4>
+        <h4>Questionnaire</h4>
       </template>
       <template #default>
         <div class="drawer-content">
           <el-collapse accordion v-model="activeNames">
-            <el-collapse-item title="系统可用性调查问卷" name="1">
+            <el-collapse-item title="Likert-scale usability survey" name="1">
               <UsabilitySurvey @submitUsabilitySurvey="handleUsabilitySubmit" />
             </el-collapse-item>
-            <el-collapse-item title="SRL能力自评问卷" name="2">
+            <el-collapse-item
+              title="SRL-awareness and self-efficacy questionnaire"
+              name="2"
+            >
               <SRLSurvey @submitSRLSurvey="handleSRLSubmit" />
             </el-collapse-item>
           </el-collapse>
@@ -40,7 +43,9 @@
       <template #footer>
         <div style="flex: auto">
           <el-button @click="cancelClick">cancel</el-button>
-          <el-button type="primary" @click="confirmClick">提交</el-button>
+          <el-button type="primary" @click="confirmClick">
+            {{ $t('button.submit') }}</el-button
+          >
         </div>
       </template>
     </el-drawer>
@@ -62,6 +67,13 @@
       @page-size-change="handlePageSizeChange"
     />
   </div>
+  <div class="ecahrts">
+    <SrlSurveyComparisonChart
+      :preScores="preScores"
+      :postScores="postScores"
+    ></SrlSurveyComparisonChart>
+    <UsabilityBarChart :scores="scores"></UsabilityBarChart>
+  </div>
 </template>
 
 <script lang="ts">
@@ -76,15 +88,26 @@
   import { ref } from 'vue';
   import { ElMessage, ElMessageBox } from 'element-plus';
   import type { DrawerProps } from 'element-plus';
-  import { saveQuestionnaire, getQuestionnaire } from '@/api/avaluation';
+  import {
+    saveQuestionnaire,
+    getQuestionnaire,
+    getAverage,
+  } from '@/api/avaluation';
   import FeedTablePost from './components/feedTablePost.vue';
   import FeedTablePre from './components/feedTablePre.vue';
   import SrlSurveyTable from './components/srlSurveyTable.vue';
   import type { QuestionnaireItem, params } from '@/api/avaluation';
+  import SrlSurveyComparisonChart from './echarts/SrlSurveyComparisonChart.vue';
+  import UsabilityBarChart from './echarts/UsabilityBarChart.vue';
+  import { useI18n } from 'vue-i18n';
+
+  const { t } = useI18n();
   const pageTable1 = ref({ pageNum: 1, pageSize: 10 });
   const pageTable2 = ref({ pageNum: 1, pageSize: 10 });
   const pageTable3 = ref({ pageNum: 1, pageSize: 10 });
-
+  const preScores = ref<number[]>([]);
+  const postScores = ref<number[]>([]);
+  const scores = ref<number[]>([]);
   const table1 = ref<{
     total: number;
     list: QuestionnaireItem[];
@@ -130,8 +153,8 @@
       Object.keys(UsabilitySurveyData.value).length === 0 ||
       Object.keys(SRLSurveyData.value).length === 0
     ) {
-      ElMessageBox.alert('请先完成两个问卷的填写后再提交。', '提示', {
-        confirmButtonText: '好的',
+      ElMessageBox.alert(t('message.hint'), t('common.hint'), {
+        confirmButtonText: 'OK',
         type: 'warning',
       });
       return;
@@ -170,7 +193,6 @@
         'Post-SRLSurvey': SRLSurveyData.value,
       });
       ElMessage.success(result.message);
-      console.log('问卷保存成功:', result);
     } catch (error: any) {
       ElMessage.success(error.message);
     }
@@ -242,6 +264,17 @@
       getTableData(pageTable1.value, params.name);
     }
   };
+  const getAverageScore = async () => {
+    try {
+      const { data } = await getAverage();
+      preScores.value = data.preScores;
+      postScores.value = data.postScores;
+      scores.value = data.usabilityScores;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  getAverageScore();
 </script>
 
 <style scoped lang="scss">
@@ -302,5 +335,8 @@
       opacity: 1;
       transform: translateX(0);
     }
+  }
+  .ecahrts {
+    margin-bottom: 30px;
   }
 </style>

@@ -77,7 +77,7 @@ service.interceptors.response.use(
         ElMessage.error('请求失败');
       }
     } else {
-      ElMessage.error('网络异常，请检查连接');
+      // ElMessage.error('网络异常，请检查连接');
     }
     return new Promise(() => {}); // 返回一个空的 Promise，避免未处理的 Promise 拦截器错误
   },

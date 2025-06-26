@@ -13,14 +13,14 @@
   <div class="footer">
     <div class="footer_left">
       <div class="footer_links">
-        <span>课程入驻</span>
-        <span>关于我们</span>
-        <span>联系我们</span>
-        <span>隐私政策</span>
-        <span>使用条款</span>
-        <span>帮助中心</span>
-        <span>意见反馈</span>
-        <span>侵权投诉</span>
+        <span>{{ $t('footer.CourseEntry') }}</span>
+        <span>{{ $t('footer.AboutUs') }}</span>
+        <span>{{ $t('footer.ContactUs') }}</span>
+        <span>{{ $t('footer.PrivacyPolicy') }}</span>
+        <span>{{ $t('footer.termsOfUse') }}</span>
+        <span>{{ $t('footer.HelpCenter') }}</span>
+        <span>{{ $t('footer.Feedback') }}</span>
+        <span>{{ $t('footer.InfringementComplaint') }}</span>
       </div>
       <div class="footer_info">
         <div>创新教育 改变世界</div>

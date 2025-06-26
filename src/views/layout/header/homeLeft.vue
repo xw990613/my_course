@@ -22,9 +22,6 @@
       <el-menu-item index="/layout/questionnaire">
         {{ $t('homePage.Questionnaire') }}
       </el-menu-item>
-      <el-menu-item index="/layout/school">
-        {{ $t('homePage.PartnerSchool') }}
-      </el-menu-item>
     </el-menu>
   </div>
 </template>

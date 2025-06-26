@@ -34,6 +34,15 @@ export default {
     PersonalData: 'PersonalData',
     CourseFilter: 'Course Filter',
     CourseResult: '{total} related courses found',
+    person: 'Persons',
+    collect: 'Collect',
+    FeedbackCenter: 'Feedback Center',
+    description: `Welcome to the Feedback Center! We will collect your subjective feedback on the system's usage experience and learning ability to optimize the recommendation algorithm and user experience.`,
+    fillIn:
+      'Click the button below to fill in the questionnaire. After submission, you will see your feedback results and trends in the chart below.',
+    fillQuestionnaire: 'Fill out the feedback questionnaire',
+    hint: 'Hint',
+    NoData: 'No data',
   },
   option: {
     Male: 'Male',
@@ -90,7 +99,7 @@ export default {
     },
     srlSurvey: {
       q1_score:
-        'In the learning process, do I often struggle to stay motivated, interested, or focused due to a lack of clear goals or initiative?',
+        'I am usually able to stay motivated, interested, and focused during the learning process because I set clear goals and take initiative?',
       q2_score:
         'Do I set clear goals and step-by-step plans for my learning, and actively track progress to achieve long-term objectives?',
       q3_score:
@@ -104,5 +113,32 @@ export default {
       q7_score:
         'Do I regularly reflect on experiences, analyze weaknesses, and proactively adjust strategies to improve my learning methods?',
     },
+  },
+  button: {
+    submit: 'Submit',
+    BatchOperations: 'Batch Operation',
+    SelectAll: 'Select All',
+    Cancel: 'Cancel',
+    Delete: 'Delete',
+  },
+  message: {
+    evaluate: 'Please rate the first 10 courses',
+    submitSuccess: 'Evaluation results submitted successfully',
+    submitFail: 'Submission failed, please try again later',
+    rateEachQuestion: 'Please rate each question before submitting.',
+    hint: 'Please complete both questionnaires before submitting.',
+    selectCourse: 'Please select the course you want to uncollect first',
+    cancelSuccess: 'Cancel collection successfully',
+    cancelFail: 'Failed to cancel collection',
+  },
+  footer: {
+    CourseEntry: 'Course Entry',
+    AboutUs: 'About Us',
+    ContactUs: 'Contact Us',
+    PrivacyPolicy: 'Privacy Policy',
+    termsOfUse: 'Terms Of Use',
+    HelpCenter: 'Help Center',
+    Feedback: 'Feedback',
+    InfringementComplaint: 'Infringement Complaint',
   },
 };

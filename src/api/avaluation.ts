@@ -23,6 +23,19 @@ export interface EvaluationResponse {
     };
   };
 }
+export interface saveResponse {
+  status: number;
+  message: string;
+}
+// 存储评估指标
+export function save_evaluation(data: any): Promise<saveResponse> {
+  return request({
+    url: '/evaluation/submit',
+    method: 'post',
+    data,
+  });
+}
+
 // 1.获取评估指标接口
 export function get_evaluation(): Promise<EvaluationResponse> {
   return request({
@@ -97,6 +110,24 @@ export interface getQuestionnaireResponse {
 export function getHomeQuestionnaire(): Promise<getQuestionnaireResponse> {
   return request({
     url: '/get_questionnaire_list',
+    method: 'get',
+  });
+}
+
+// 5 系统可用性 前后srl维度的echarts图表数据
+export interface scroreItem {
+  preScores: number[];
+  postScores: number[];
+  usabilityScores: number[];
+}
+export interface getScoreAvarage {
+  status: number;
+  message: string;
+  data: scroreItem;
+}
+export function getAverage(): Promise<getScoreAvarage> {
+  return request({
+    url: '/survey/average',
     method: 'get',
   });
 }

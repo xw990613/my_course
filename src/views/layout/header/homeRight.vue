@@ -36,9 +36,6 @@
       </div>
       <template #dropdown>
         <el-dropdown-menu>
-          <el-dropdown-item command="my_Course">
-            {{ $t('homePage.MyCourse') }}</el-dropdown-item
-          >
           <el-dropdown-item
             command="person_info"
             @click="router.push('/layout/personalCenter')"

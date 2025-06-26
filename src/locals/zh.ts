@@ -33,6 +33,16 @@ export default {
     PersonalData: '个人资料',
     CourseFilter: '课程筛选',
     CourseResult: '搜索到 {total} 门相关课程',
+    person: '人',
+    collect: '收藏',
+    FeedbackCenter: '反馈中心',
+    description:
+      '欢迎来到反馈中心！我们将收集您对系统使用体验及学习能力的主观反馈，以优化推荐算法与用户体验。',
+    fillIn:
+      '点击下方按钮填写问卷，提交后将在下方图表中查看您的反馈结果与趋势。',
+    fillQuestionnaire: '填写反馈问卷',
+    hint: '提示',
+    NoData: '暂无数据',
   },
   option: {
     Male: '男',
@@ -60,7 +70,7 @@ export default {
   questionnaire: {
     srlSurvey: {
       q1_score:
-        '在学习过程中，我是否经常因缺乏动力、兴趣或不明确的目标而难以保持主动性与专注力？',
+        '在学习过程中，我通常能够保持动力、兴趣和专注，因为我会设定明确的目标并主动推进学习？',
       q2_score:
         '我是否为自己的学习设定清晰的目标与阶段性计划，并主动跟进任务进度以实现长期学习成果？',
       q3_score:
@@ -101,5 +111,32 @@ export default {
       q7_score: '我愿意再次使用该推荐系统。',
       q8_score: '我会向他人推荐此系统。',
     },
+  },
+  button: {
+    submit: '提交',
+    BatchOperations: '批量操作',
+    SelectAll: '全选',
+    Cancel: '取消',
+    Delete: '删除',
+  },
+  message: {
+    evaluate: '请对前10条课程进行评价',
+    submitSuccess: '评估结果提交成功',
+    submitFail: '提交失败，请稍后再试',
+    rateEachQuestion: '请为每一道题目进行评分后再提交～',
+    hint: '请先完成两个问卷的填写后再提交。',
+    selectCourse: '请先选择要取消收藏的课程',
+    cancelSuccess: '取消收藏成功',
+    cancelFail: '取消收藏失败',
+  },
+  footer: {
+    CourseEntry: '课程入驻',
+    AboutUs: '关于我们',
+    ContactUs: '联系我们',
+    PrivacyPolicy: '隐私政策',
+    termsOfUse: '使用条款',
+    HelpCenter: '帮助中心',
+    Feedback: '意见反馈',
+    InfringementComplaint: '侵权投诉',
   },
 };

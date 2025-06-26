@@ -59,10 +59,10 @@
   import { reactive, onMounted, ref, computed } from 'vue';
   import emitter from '@/utils/emitter';
 
-  let classify_id = ref(0);
-  let status_id = ref(0);
-  let org_id = ref(0);
-  let selling_type_id = ref(0);
+  const classify_id = ref(0);
+  const status_id = ref(0);
+  const org_id = ref(0);
+  const selling_type_id = ref(0);
   const loading = ref(true); // 控制骨架屏展示
 
   interface Item {

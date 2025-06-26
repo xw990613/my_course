@@ -1,6 +1,6 @@
 <template>
   <div class="usability-survey">
-    <h2 class="survey-title">系统可用性调查问卷</h2>
+    <h2 class="survey-title">Likert-scale usability survey</h2>
     <el-form label-position="top" @submit.prevent="submitSurvey">
       <div v-for="(q, index) in questions" :key="index" class="card">
         <p class="question">{{ index + 1 }}. {{ q.label }}</p>

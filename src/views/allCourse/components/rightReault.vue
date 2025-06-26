@@ -45,26 +45,45 @@
           <div class="teacher">
             <span class="teacher_con">{{ item.teacher }}</span>
             <span class="org_con">{{ item.school_name }}</span>
-            <span class="person">{{ item.count }}人</span>
-            <span @click="hendleCollect(item)">收藏</span>
+            <span class="person">{{ item.count }}</span>
+            <span @click="hendleCollect(item)">
+              <i
+                class="iconfont icon-shoucang"
+                :class="{ active: collectedCourseMap[item.id] }"
+              ></i>
+            </span>
           </div>
           <div class="info">{{ item.short_intro }}</div>
           <div class="evaluation" v-if="index < 10 && page.currentPage === 1">
             <span class="recommend" @click="handleEvaluation(item, true)">
-              👍 有用
+              <i
+                class="iconfont icon-dianzan"
+                :class="{
+                  active:
+                    evaluationSelections[courseIdIndexMap[item.id]] === true,
+                }"
+              ></i>
             </span>
             <span
               class="Not-recommended"
               @click="handleEvaluation(item, false)"
             >
-              👎 无用
+              <i
+                class="iconfont icon-cai"
+                :class="{
+                  active:
+                    evaluationSelections[courseIdIndexMap[item.id]] === false,
+                }"
+              ></i>
             </span>
           </div>
         </div>
       </div>
     </template>
 
-    <el-button class="submit" @click="submitEvaluation">提交评估结果</el-button>
+    <el-button class="submit" @click="submitEvaluation">{{
+      $t('button.submit')
+    }}</el-button>
 
     <div
       class="demo-pagination-block"
@@ -86,20 +105,17 @@
   </div>
 </template>
 
-<script lang="ts">
-  export default {
-    name: 'rightReault',
-  };
-</script>
-
-<script setup lang="ts">
+<script lang="ts" setup>
   import emitter from '@/utils/emitter';
   import { getCourseList } from '@/api/projectList';
   import type { getCourseListRequest } from '@/api/projectList';
   import { collectCourse } from '@/api/user';
-  import { onMounted, reactive, ref } from 'vue';
+  import { onMounted, onUnmounted, reactive, ref } from 'vue';
+  import { save_evaluation } from '@/api/avaluation';
   import { ElMessage, type ComponentSize } from 'element-plus';
+  import { useI18n } from 'vue-i18n';
 
+  const { t } = useI18n();
   interface CourseList {
     status: number;
     org: number | string;
@@ -136,15 +152,12 @@
   }
 
   const courseListDataItem = reactive<CourseListData[]>([]);
-  const page = reactive({
-    currentPage: 1,
-    pageSize: 10,
-  });
+  const page = reactive({ currentPage: 1, pageSize: 10 });
   const size = ref<ComponentSize>('default');
   const background = ref(false);
   const disabled = ref(false);
   const total = ref(0);
-  const loading = ref(true); // 控制骨架屏加载状态
+  const loading = ref(true);
 
   const evaluationSelections = ref<(boolean | null)[]>([]);
   const courseIdIndexMap = ref<Record<number, number>>({});
@@ -163,31 +176,26 @@
 
   emitter.on('sendClassifyData', value => {
     Object.assign(courseList, value);
-    Object.assign(page, {
-      currentPage: 1,
-      pageSize: 10,
-    });
+    Object.assign(page, { currentPage: 1, pageSize: 10 });
     getCourseListItem(courseList);
   });
 
   emitter.on('sendInput', value => {
     Object.assign(courseList, value);
-    Object.assign(page, {
-      currentPage: 1,
-      pageSize: 10,
-    });
+    Object.assign(page, { currentPage: 1, pageSize: 10 });
     getCourseListItem(courseList);
   });
 
-  const emit = defineEmits<{
-    (e: 'send-value', payload: number): void;
-  }>();
+  onUnmounted(() => {
+    emitter.off('sendInput');
+  });
+
+  const emit = defineEmits<{ (e: 'send-value', payload: number): void }>();
 
   const getCourseListItem = async (data: getCourseListRequest) => {
     loading.value = true;
     Object.assign(courseList, page);
     const result = await getCourseList(data);
-    // 模拟延迟，方便看到骨架动画
     await new Promise(resolve => setTimeout(resolve, 600));
     courseListDataItem.length = 0;
     courseListDataItem.push(...result.data);
@@ -214,8 +222,9 @@
 
   const submitEvaluation = async () => {
     const selections = evaluationSelections.value;
+
     if (selections.length === 0 || selections.some(s => s === null)) {
-      ElMessage.warning('请对前10条课程进行评价');
+      ElMessage.warning(t('message.evaluate'));
       return;
     }
     const payload = {
@@ -225,23 +234,36 @@
       total: total.value,
     };
     try {
-      // await postEvaluationResult(payload);
-      ElMessage.success('评估结果提交成功');
+      await save_evaluation(payload);
+      ElMessage.success(t('message.submitSuccess'));
     } catch (error) {
-      ElMessage.error('提交失败，请稍后再试');
+      ElMessage.error(t('message.submitFail'));
     }
   };
 
   const handleEvaluation = (item: CourseListData, useful: boolean) => {
     const index = courseIdIndexMap.value[item.id];
     if (index !== undefined) {
-      evaluationSelections.value[index] = useful;
+      const current = evaluationSelections.value[index];
+      if (current === useful) {
+        evaluationSelections.value[index] = null;
+      } else {
+        evaluationSelections.value[index] = useful;
+      }
     }
   };
 
+  // 用于记录收藏状态
+  const collectedCourseMap = ref<Record<number, boolean>>({});
+
+  // 收藏功能：切换状态
   const hendleCollect = async (item: CourseListData) => {
     try {
-      await collectCourse({ courseId: item.id });
+      const res = await collectCourse({ courseId: item.id });
+      if (res.status === 1) {
+        collectedCourseMap.value[item.id] = !collectedCourseMap.value[item.id];
+      }
+      ElMessage.success(res.message);
     } catch (error) {
       console.log(error);
     }
@@ -256,13 +278,12 @@
       margin-bottom: 20px;
       cursor: pointer;
       .rightcon {
-        width: 524px;
+        width: 560px;
         .titletext {
           font-size: 16px;
           font-weight: 500;
           line-height: 22px;
           text-overflow: ellipsis;
-          vertical-align: middle;
           white-space: nowrap;
           color: #333;
         }
@@ -298,11 +319,7 @@
           display: flex;
           align-items: center;
           .recommend {
-            color: #67c23a;
             margin-right: 30px;
-          }
-          .Not-recommended {
-            color: #f56c6c;
           }
         }
       }
@@ -315,17 +332,10 @@
           border-radius: 6px;
           display: block;
           height: 100%;
-          opacity: 1;
-          position: relative;
-          transition: opacity 0.3s ease 0s;
           width: 100%;
-          z-index: 1;
         }
       }
     }
-  }
-  .demo-pagination-block + .demo-pagination-block {
-    margin-top: 10px;
   }
   .submit {
     height: 40px;
@@ -336,5 +346,21 @@
     border-radius: 4px;
     font-size: 14px;
     font-weight: 500;
+  }
+  .iconfont {
+    font-size: 24px;
+    color: #ccc;
+    transition: color 0.3s;
+    cursor: pointer;
+  }
+  .icon-shoucang {
+    font-size: 16px;
+  }
+  .iconfont:hover {
+    color: #f6c144;
+  }
+
+  .iconfont.active {
+    color: #f6c144;
   }
 </style>

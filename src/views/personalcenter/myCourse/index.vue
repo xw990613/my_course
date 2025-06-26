@@ -5,16 +5,18 @@
         type="primary"
         @click="handleOperate"
         style="margin-bottom: 10px"
-        >批量操作</el-button
+        >{{ $t('button.BatchOperations') }}</el-button
       >
       <div v-if="isOperate">
-        <el-button type="primary" @click="handleAll" v-if="!isAll"
-          >全选</el-button
-        >
-        <el-button type="primary" @click="handleCancelAll" v-else
-          >取消全选</el-button
-        >
-        <el-button type="primary" @click="cancelCollect">取消收藏</el-button>
+        <el-button type="primary" @click="handleAll" v-if="!isAll">{{
+          $t('button.SelectAll')
+        }}</el-button>
+        <el-button type="primary" @click="handleCancelAll" v-else>{{
+          $t('button.Cancel')
+        }}</el-button>
+        <el-button type="primary" @click="cancelCollect">{{
+          $t('button.Delete')
+        }}</el-button>
       </div>
     </div>
     <div class="rightReault">
@@ -39,7 +41,7 @@
           <div class="teacher">
             <span class="teacher_con">{{ item.teacher }}</span>
             <span class="org_con">{{ item.school_name }}</span>
-            <span>{{ item.count }}人</span>
+            <span>{{ item.count }}</span>
           </div>
           <div class="info">
             {{ item.short_intro }}
@@ -48,7 +50,7 @@
       </div>
     </div>
   </div>
-  <el-empty v-else description="暂无数据" />
+  <el-empty v-else :description="$t('common.NoData')" />
 </template>
 
 <script lang="ts">
@@ -62,6 +64,9 @@
   import { getCollectCourse, cancelCollectCourse } from '@/api/user';
   import type { CourseListData } from '@/api/projectList';
   import { ElMessage } from 'element-plus';
+  import { useI18n } from 'vue-i18n';
+
+  const { t } = useI18n();
   const tableData = reactive<CourseListData[]>([]);
   const isAll = ref(false);
   const isOperate = ref(false);
@@ -98,7 +103,7 @@
       .map(item => item.id);
 
     if (selectedIds.length === 0) {
-      return ElMessage.warning('请先选择要取消收藏的课程');
+      return ElMessage.warning(t('message.selectCourse'));
     }
 
     try {
@@ -107,11 +112,11 @@
         const index = tableData.findIndex(item => item.id === id);
         if (index !== -1) tableData.splice(index, 1);
       });
-      ElMessage.success('取消收藏成功');
+      ElMessage.success(t('message.cancelSuccess'));
       isOperate.value = false;
       isAll.value = false;
     } catch (error) {
-      ElMessage.error('取消收藏失败');
+      ElMessage.error(t('message.cancelFail'));
     }
   };
 

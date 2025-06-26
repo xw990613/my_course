@@ -1,6 +1,6 @@
 <template>
   <div class="srl-survey">
-    <h2 class="survey-title">自我调节学习（SRL）能力评估问卷</h2>
+    <h2 class="survey-title">SRL-awareness and self-efficacy questionnaire</h2>
     <el-form label-position="top" @submit.prevent="submitSurvey">
       <div v-for="(item, index) in questions" :key="index" class="card">
         <p class="question">{{ index + 1 }}. {{ item.label }}</p>

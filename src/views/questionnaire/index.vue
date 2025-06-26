@@ -1,6 +1,6 @@
 <template>
   <div class="survey-container">
-    <h1>自我调节学习（SRL）调查问卷</h1>
+    <h1>SRL-awareness and self-efficacy questionnaire</h1>
     <el-form @submit.prevent="submitForm">
       <el-form-item
         v-for="(item, index) in questionnaire"
@@ -21,7 +21,9 @@
         ></el-rate>
       </el-form-item>
 
-      <el-button type="primary" @click="submitForm">提交</el-button>
+      <el-button type="primary" @click="submitForm">{{
+        $t('button.submit')
+      }}</el-button>
     </el-form>
   </div>
 </template>
@@ -44,9 +46,6 @@
   import { useRouter } from 'vue-router';
   import { saveQuestionnaire } from '@/api/avaluation';
   import { useI18n } from 'vue-i18n';
-  import { useAuthStore } from '@/stores/auth';
-  const auth = useAuthStore();
-  console.log(auth.userInfo, '@@@');
   const { t } = useI18n();
   const router = useRouter();
 
@@ -65,7 +64,7 @@
   const submitForm = async () => {
     const unfilled = questionnaire.find(q => q.score === 0);
     if (unfilled) {
-      ElMessage.warning('请为每一道题目进行评分后再提交～');
+      ElMessage.warning(t('message.rateEachQuestion'));
       return;
     }
     const payload = Object.fromEntries(
