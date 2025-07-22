@@ -8,13 +8,19 @@
           v-model="item.score"
           :max="5"
           show-text
-          :texts="['非常不同意', '不同意', '中立', '同意', '非常同意']"
+          :texts="[
+            'Strongly Disagree',
+            'Disagree',
+            'Generally',
+            'Agree',
+            'Strongly Agree',
+          ]"
           class="rate"
         />
       </div>
       <div class="submit-area">
         <el-button type="primary" size="large" @click="submitSurvey">
-          保存
+          {{ $t('common.Save') }}
         </el-button>
       </div>
     </el-form>
@@ -43,7 +49,7 @@
   const submitSurvey = async () => {
     const unfilled = questions.value.find(q => q.score === 0);
     if (unfilled) {
-      ElMessage.warning('请为每一道题目进行评分后再提交～');
+      ElMessage.warning(t('message.rateEachQuestion'));
       return;
     }
     const payload = Object.fromEntries(

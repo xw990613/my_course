@@ -36,7 +36,7 @@ export const useAuthStore = defineStore('auth', {
             .catch(err => console.warn('跳转失败:', err));
         }
       } catch (err: any) {
-        ElMessage.error(err.message || '登录失败');
+        console.log(err);
       }
     },
     // 注册
@@ -49,7 +49,7 @@ export const useAuthStore = defineStore('auth', {
           type: 'success',
         });
       } catch (err: any) {
-        ElMessage.error(err.message || '注册失败');
+        console.log(err);
       }
     },
     // 获取用户信息
@@ -58,7 +58,7 @@ export const useAuthStore = defineStore('auth', {
         const result = await user_getInfo();
         this.userInfo = result.data;
       } catch (err: any) {
-        ElMessage.error(err.message || '获取用户信息失败');
+        console.log(err);
       }
     },
     // 退出登录

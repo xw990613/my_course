@@ -53,9 +53,9 @@
         left: 'center',
       },
       tooltip: {
-        trigger: 'axis', // ✅ 鼠标悬浮在轴上时显示
+        trigger: 'axis', //  鼠标悬浮在轴上时显示
         axisPointer: {
-          type: 'shadow', // ✅ 默认为 shadow，适合柱状图
+          type: 'shadow', // 默认为 shadow，适合柱状图
         },
         formatter: (params: any) => {
           console.log('✅ Tooltip Formatter Triggered:', params);
@@ -89,7 +89,21 @@
           color: '#333',
         },
       },
-      series: [{ type: 'bar', data: coloredData }],
+      // series: [{ type: 'bar', data: coloredData }],
+      series: [
+        {
+          type: 'bar',
+          data: coloredData,
+          label: {
+            show: true,
+            position: 'top',
+            formatter: ({ value }: any) => value.toFixed(2),
+            fontSize: 12,
+            color: '#000',
+          },
+        },
+      ],
+
       graphic:
         coloredData.length === 0
           ? [

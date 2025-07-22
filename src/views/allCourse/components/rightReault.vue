@@ -237,7 +237,7 @@
       await save_evaluation(payload);
       ElMessage.success(t('message.submitSuccess'));
     } catch (error) {
-      ElMessage.error(t('message.submitFail'));
+      console.log(error);
     }
   };
 

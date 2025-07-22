@@ -77,7 +77,7 @@
       ElMessage.success(result.message);
       router.push('/layout/home');
     } catch (error: any) {
-      ElMessage.error(error.message);
+      console.log(error);
     }
   };
 </script>
@@ -85,7 +85,7 @@
 <style scoped lang="scss">
   .survey-container {
     width: 80%;
-    max-width: 1100px;
+    max-width: 1300px;
     margin: 50px auto;
     padding: 30px;
     background-color: #ffffff;

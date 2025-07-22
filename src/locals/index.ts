@@ -1,10 +1,12 @@
 import { createI18n } from 'vue-i18n';
 import zh from './zh';
 import en from './en';
+import ms from './ms';
 
 const messages = {
   en,
   zh,
+  ms,
 };
 
 const language = (navigator.language || 'en').toLocaleLowerCase(); // 这是获取浏览器的语言

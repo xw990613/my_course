@@ -24,7 +24,7 @@
         <el-dropdown-menu>
           <el-dropdown-item command="zh">中文</el-dropdown-item>
           <el-dropdown-item command="en">English</el-dropdown-item>
-          <el-dropdown-item command="my">Melayu</el-dropdown-item>
+          <el-dropdown-item command="ms">Melayu</el-dropdown-item>
         </el-dropdown-menu>
       </template>
     </el-dropdown>
@@ -66,11 +66,10 @@
   const languageMap = {
     zh: '中文',
     en: 'English',
-    my: 'Melayu',
+    ms: 'Melayu',
   } as const;
   type LangKey = keyof typeof languageMap;
-  let currentLanguage = (localStorage.getItem('lang') as LangKey) || 'zh';
-  console.log(route.fullPath, '@@@');
+  let currentLanguage = (localStorage.getItem('lang') as LangKey) || 'en';
   // 👇 默认头像地址
   const DEFAULT_AVATAR =
     'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png';

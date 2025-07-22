@@ -2,8 +2,8 @@
   <div class="login-wrapper">
     <div class="login-container">
       <div class="form-header">
-        <h2>用户登录</h2>
-        <p>欢迎回来，请登录您的账号</p>
+        <h2>{{ $t('login.userLogin') }}</h2>
+        <p>{{ $t('login.welcome') }}</p>
       </div>
       <el-form
         ref="ruleFormRef"
@@ -19,7 +19,7 @@
             v-model="ruleForm.phone_number"
             type="text"
             autocomplete="off"
-            placeholder="请输入手机号"
+            :placeholder="$t('login.plsInputPhone')"
           />
         </el-form-item>
         <el-form-item label="" prop="password" class="form-item-fixed">
@@ -27,7 +27,7 @@
             v-model="ruleForm.password"
             type="password"
             autocomplete="off"
-            placeholder="请输入密码"
+            :placeholder="$t('login.plsInputPassword')"
           />
         </el-form-item>
         <el-form-item class="form-item-fixed">
@@ -36,13 +36,15 @@
             @click="submitForm(ruleFormRef)"
             class="login-btn"
           >
-            登录
+            {{ $t('login.login') }}
           </el-button>
         </el-form-item>
       </el-form>
       <div class="form-footer">
-        <span>还没有账号？</span>
-        <span class="register" @click="handelRegister">立即注册</span>
+        <span>{{ $t('login.Noaccount') }}</span>
+        <span class="register" @click="handelRegister">{{
+          $t('login.RegisterNow')
+        }}</span>
       </div>
     </div>
   </div>
@@ -59,15 +61,18 @@
   import type { FormInstance, FormRules } from 'element-plus';
   import { useRouter, useRoute } from 'vue-router';
   import { useAuthStore } from '@/stores/auth';
+  import { useI18n } from 'vue-i18n';
+
+  const { t } = useI18n();
   const ruleFormRef = ref<FormInstance>();
   const auth = useAuthStore();
   // 自定义校验器：手机号
   const validatePhone = (rule: any, value: string, callback: any) => {
     const phoneReg = /^1[3-9]\d{9}$/;
     if (!value) {
-      callback(new Error('请输入手机号'));
+      callback(new Error(t('login.plsInputPhone')));
     } else if (!phoneReg.test(value)) {
-      callback(new Error('请输入正确的手机号'));
+      callback(new Error(t('login.validMobilePhone')));
     } else {
       callback();
     }
@@ -76,11 +81,11 @@
   // 自定义校验器：密码
   const validatePassword = (rule: any, value: string, callback: any) => {
     if (!value) {
-      callback(new Error('密码不能为空'));
+      callback(new Error(t('login.passwordEmpty')));
     } else if (value.length < 6) {
-      callback(new Error('密码长度不能少于6位'));
+      callback(new Error(t('login.passwordLength')));
     } else if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(value)) {
-      callback(new Error('密码必须包含字母和数字'));
+      callback(new Error(t('login.passwordFormat')));
     } else {
       callback();
     }

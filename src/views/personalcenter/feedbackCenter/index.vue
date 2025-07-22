@@ -194,7 +194,7 @@
       });
       ElMessage.success(result.message);
     } catch (error: any) {
-      ElMessage.success(error.message);
+      console.log(error);
     }
   };
   const getTableData = async (params: params, name: string) => {
@@ -217,7 +217,7 @@
         table3.value = { total, list };
       }
     } catch (error: any) {
-      ElMessage.error(error.message);
+      console.log(error);
     }
   };
   getTableData(pageTable1.value, '');

@@ -195,7 +195,7 @@
     isEdit.value = !isEdit.value;
     try {
       const res = await user_updateInfo(formInline);
-      ElMessage.success(res.message || '保存成功');
+      ElMessage.success(res.message);
       await auth.getUserInfo();
     } catch (error) {
       console.error('保存失败', error);

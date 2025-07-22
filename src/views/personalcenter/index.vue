@@ -75,6 +75,9 @@
   import { useAuthStore } from '@/stores/auth';
   import { ref, watch } from 'vue';
   import { useRoute } from 'vue-router';
+  import { useI18n } from 'vue-i18n';
+
+  const { t } = useI18n();
   const route = useRoute();
   const activeIndex = ref(route.path);
   // 监听路由变化，更新activeIndex
@@ -82,7 +85,6 @@
     () => route.path,
     newPath => {
       activeIndex.value = newPath;
-      console.log('路由变化更新activeIndex:', newPath);
     },
   );
   const uploadRef = ref();
@@ -110,7 +112,7 @@
       if (val) {
         avatarUrl.value =
           import.meta.env.VITE_API_BASE_URL + val.user_pic || DEFAULT_AVATAR;
-        username.value = val.username || '未命名用户';
+        username.value = val.username || t('common.UnnamedUser');
       }
     },
     { immediate: true },
@@ -118,18 +120,17 @@
 
   // 上传成功回调
   async function onAvatarUpload(res: any) {
-    console.log(res, '@@@');
     if (res.code === 0) {
       // 重要：清除上传列表，防止限制限制再次触发
       uploadRef.value?.clearFiles();
       await auth.getUserInfo();
-      ElMessage.success('头像更新成功');
+      ElMessage.success(t('common.AvatarSuccessfully'));
     } else {
-      ElMessage.error('上传失败，请重试');
+      ElMessage.error(t('common.UploadFailed'));
     }
   }
   function onAvatarUploadError(err: any) {
-    ElMessage.error('上传失败，请检查网络或文件格式');
+    ElMessage.error(t('common.UploadFailedFormat'));
   }
 
   // 限制图片格式和大小
@@ -139,10 +140,10 @@
     const isLt2M = file.size / 1024 / 1024 < 10; // 小于 4MB
 
     if (!isImage) {
-      ElMessage.error('只能上传 JPG/PNG/GIF/WEBP 格式的图片');
+      ElMessage.error(t('common.ImageLimit'));
     }
     if (!isLt2M) {
-      ElMessage.error('头像图片大小不能超过 10MB');
+      ElMessage.error(t('common.ImageSize'));
     }
     return isImage && isLt2M;
   }

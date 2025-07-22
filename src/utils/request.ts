@@ -1,6 +1,9 @@
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
 import router from '@/router';
+import { i18nInstance } from '@/locals/index.ts';
+
+const t = i18nInstance.global.t;
 // 创建实例
 const service = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL, // 环境变量配置
@@ -32,52 +35,34 @@ service.interceptors.response.use(
     const res = response.data;
     // 业务状态码统一处理
     if (res.status !== 0) {
-      const message = res.message || '请求出错';
-
-      // 可以根据具体status进一步处理
-      switch (res.status) {
-        case 401:
-          ElMessage.success('登录失效，请重新登录');
-          // 清理登录状态或跳转登录页
-          break;
-        case 403:
-          ElMessage.success('权限不足');
-          break;
-        case 500:
-          ElMessage.success('服务器错误');
-          break;
-        default:
-          ElMessage.success(message);
-      }
-
+      const message = res.message;
+      ElMessage.success(message);
       return new Promise(() => {}); // 返回一个空的 Promise，避免未处理的 Promise 拦截器错误
     }
-    // ElMessage.success(res.message);
     return res;
   },
   error => {
     if (axios.isCancel(error)) {
-      console.warn('请求被取消：', error.message);
-      ElMessage.error('请求被取消:' + error.message);
+      ElMessage.error(t('common.RequestCanceled') + error.message);
     } else if (error.response) {
       const status = error.response.status;
 
       if (status === 401) {
-        ElMessage.error('登录已过期，请重新登录');
+        ElMessage.error(t('common.loginInvalid'));
         localStorage.removeItem('token');
         router.push({
           path: '/login',
           query: { redirect: router.currentRoute.value.fullPath },
         });
       } else if (status === 403) {
-        ElMessage.error('没有权限访问该资源');
+        ElMessage.error(t('common.NoPermission'));
       } else if (status >= 500) {
-        ElMessage.error('服务器异常，请稍后再试');
+        ElMessage.error(t('common.ServerError'));
       } else {
-        ElMessage.error('请求失败');
+        ElMessage.error(t('common.RequestFailed'));
       }
     } else {
-      // ElMessage.error('网络异常，请检查连接');
+      ElMessage.error(t('common.NetworkAbnormal'));
     }
     return new Promise(() => {}); // 返回一个空的 Promise，避免未处理的 Promise 拦截器错误
   },

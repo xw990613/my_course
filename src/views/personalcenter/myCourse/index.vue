@@ -116,7 +116,7 @@
       isOperate.value = false;
       isAll.value = false;
     } catch (error) {
-      ElMessage.error(t('message.cancelFail'));
+      console.log(error);
     }
   };
 

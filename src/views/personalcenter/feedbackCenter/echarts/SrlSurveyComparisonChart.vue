@@ -39,10 +39,20 @@
   // 图表配置生成函数
   function getChartOptions(preScores: any, postScores: any) {
     return {
+      // title: {
+      //   text: 'SRL Survey Comparison (Pre vs Post)',
+      //   left: 'center',
+      // },
       title: {
         text: 'SRL Survey Comparison (Pre vs Post)',
         left: 'center',
+        textStyle: {
+          fontSize: 18,
+          fontWeight: 'bold',
+          color: '#333',
+        },
       },
+
       // tooltip: {
       //   trigger: 'axis',
       //   axisPointer: {
@@ -102,11 +112,28 @@
         bottom: '10%',
         containLabel: true,
       },
+      // xAxis: {
+      //   type: 'value',
+      //   min: 0,
+      //   max: 5,
+      // },
       xAxis: {
         type: 'value',
         min: 0,
         max: 5,
+        splitLine: {
+          show: false,
+        },
+        axisLine: {
+          lineStyle: {
+            color: '#999',
+          },
+        },
+        axisLabel: {
+          fontSize: 12,
+        },
       },
+
       yAxis: {
         type: 'category',
         data: [
@@ -119,6 +146,24 @@
           'Self-Reflection',
         ],
       },
+      // series: [
+      //   {
+      //     name: 'Pre-SRLSurvey',
+      //     type: 'bar',
+      //     data: preScores,
+      //     itemStyle: {
+      //       color: '#5470C6',
+      //     },
+      //   },
+      //   {
+      //     name: 'Post-SRLSurvey',
+      //     type: 'bar',
+      //     data: postScores,
+      //     itemStyle: {
+      //       color: '#91CC75',
+      //     },
+      //   },
+      // ],
       series: [
         {
           name: 'Pre-SRLSurvey',
@@ -126,7 +171,16 @@
           data: preScores,
           itemStyle: {
             color: '#5470C6',
+            borderRadius: [4, 4, 0, 0], // 圆角柱状图
           },
+          label: {
+            show: true,
+            position: 'right',
+            formatter: '{c}',
+            fontSize: 14,
+            color: '#333',
+          },
+          barGap: '30%',
         },
         {
           name: 'Post-SRLSurvey',
@@ -134,6 +188,14 @@
           data: postScores,
           itemStyle: {
             color: '#91CC75',
+            borderRadius: [4, 4, 0, 0],
+          },
+          label: {
+            show: true,
+            position: 'right',
+            formatter: '{c}',
+            fontSize: 14,
+            color: '#333',
           },
         },
       ],
